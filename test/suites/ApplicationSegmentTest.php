@@ -12,7 +12,7 @@ use Hatcher\DI;
 use Hatcher\ModuleManagerInterface;
 
 /**
- * @covers ApplicationSegment
+ * @covers Hatcher\ApplicationSegment
  */
 class ApplicationSegmentTest extends \PHPUnit_Framework_TestCase
 {
