@@ -13,7 +13,7 @@ use Hatcher\ModuleManager\ModuleDoesNotExistException;
 use Hatcher\Application;
 
 /**
- * @covers RegisteredModules
+ * @covers Hatcher\ModuleManager\RegisteredModules
  */
 class RegisteredModulesTest extends \PHPUnit_Framework_TestCase
 {

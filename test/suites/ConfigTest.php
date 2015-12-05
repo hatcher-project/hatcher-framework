@@ -8,7 +8,7 @@ namespace Hatcher\Test;
 use Hatcher\Config;
 
 /**
- * @covers Config
+ * @covers Hatcher\Config
  */
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {

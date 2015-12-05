@@ -12,7 +12,7 @@ use Hatcher\DI;
 use Hatcher\Module;
 
 /**
- * @covers Module
+ * @covers Hatcher\Module
  */
 class ModuleTest extends \PHPUnit_Framework_TestCase
 {
