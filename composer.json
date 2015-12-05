@@ -1,0 +1,41 @@
+{
+
+  "name": "hatcher/hatcher",
+  "description": "Php framework using existing components",
+  "type": "framework",
+  "keywords": ["framework"],
+  "homepage": "https://github.com/hatcher-php/hatcher",
+  "license": "Fair",
+
+  "authors": [
+    {
+      "name": "Soufiane GHZAL",
+      "homepage": "https://github.com/gsouf"
+    }
+  ],
+
+  "autoload":{
+    "psr-4" : {
+      "Hatcher\\"   :   "src/"
+    }
+  },
+
+  "autoload-dev":{
+    "psr-4" : {
+      "Hatcher\\Test\\"   :   "test/suites"
+    }
+  },
+
+  "require": {
+    "php": ">=5.5.0",
+    "pimple/pimple": "~3.0.0",
+    "hassankhan/config": "~0.8.2",
+    "psr/http-message" : "1.0"
+  },
+
+  "require-dev":{
+    "phpunit/phpunit": "4.1.2",
+    "codeclimate/php-test-reporter": "dev-master",
+    "squizlabs/php_codesniffer": "~2"
+  }
+}
