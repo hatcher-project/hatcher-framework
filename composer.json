@@ -30,7 +30,8 @@
     "php": ">=5.5.0",
     "pimple/pimple": "~3.0.0",
     "hassankhan/config": "~0.8.2",
-    "psr/http-message" : "1.0"
+    "psr/http-message" : "1.0",
+    "sebastian/phpcpd": "~2.0.2"
   },
 
   "require-dev":{
