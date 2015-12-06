@@ -13,4 +13,4 @@ fi
 SCRIPTFILE=$(readlink -f "$0")
 SCRIPTDIR=$(dirname "$SCRIPTFILE")
 
-cd $SCRIPTDIR/../.. && $SCRIPTDIR/../../vendor/bin/phpcbf --standard="$SCRIPTDIR/../../test/phpcs/ruleset.xml"
+cd $SCRIPTDIR/../.. && $SCRIPTDIR/../../vendor/bin/phpcbf --standard="$SCRIPTDIR/../../test/phpcs-ruleset.xml"

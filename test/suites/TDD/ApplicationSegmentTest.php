@@ -3,7 +3,7 @@
  * @license see LICENSE
  */
 
-namespace Hatcher\Test;
+namespace Hatcher\Test\TDD;
 
 use Composer\Autoload\ClassLoader;
 use Hatcher\ApplicationSegment;
@@ -24,25 +24,12 @@ class ApplicationSegmentTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-
-        $this->application = $this->getMockForAbstractClass(
-            ApplicationSegment::class,
-            [
-                "./root",
-                new Config(["foo" => "bar"]),
-                new DI()
-            ]
+        $this->application = new ApplicationSegment(
+            new Config(["foo" => "bar"]),
+            new DI()
         );
     }
 
-    public function testResolvePath()
-    {
-
-        $this->assertEquals("./root", $this->application->resolvePath());
-        $this->assertEquals("./root/.", $this->application->resolvePath("."));
-        $this->assertEquals("./root/data", $this->application->resolvePath("data"));
-
-    }
 
 
     public function testGetDi()

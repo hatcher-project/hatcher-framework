@@ -5,7 +5,7 @@
 
 namespace Hatcher;
 
-use HatcherModuleManager\ModuleDoesNotExistException;
+use Hatcher\ModuleManager\ModuleDoesNotExistException;
 
 interface ModuleManagerInterface
 {

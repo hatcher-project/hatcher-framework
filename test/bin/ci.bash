@@ -6,38 +6,49 @@ SCRIPTFILE=$(readlink -f "$0")
 SCRIPTDIR=$(dirname "$SCRIPTFILE")
 
 
-echo ""
+echo -e "\e[34m"
 echo "======================"
-echo "= Running test suite ="
-echo "======================"
+echo -e "= \e[1m\e[33mRunning unit tests\e[0m\e[34m ="
+echo -e "======================\e[39m"
 
 phpunit -c "$SCRIPTDIR/../../phpunit.dist.xml" --coverage-clover "$SCRIPTDIR/../../build/logs/clover.xml"
 
 
-echo ""
+echo -e "\e[34m"
+echo "=========================="
+echo -e "= \e[1m\e[33mRunning specifications\e[0m\e[34m ="
+echo -e "==========================\e[39m"
+
+
+php "$SCRIPTDIR/../../vendor/bin/pho" -b  "$SCRIPTDIR/../../test/bootstrap-tests.php"   "$SCRIPTDIR/../../test/suites/spec/"
+
+
+echo -e "\e[34m"
 echo "================================="
-echo "= Checking code style standards ="
-echo "================================="
+echo -e "= \e[1m\e[33mChecking code style standards\e[0m\e[34m ="
+echo -e "=================================\e[39m"
 
 $SCRIPTDIR/phpcs.bash $1
 
 echo "OK"
 
+echo -e "\e[34m"
+echo "==================================="
+echo -e "= \e[1m\e[33mProcessing copy/paste detection\e[0m\e[34m ="
+echo -e "===================================\e[39m"
+
+php "$SCRIPTDIR/../../vendor/bin/phpcpd" --verbose --no-interaction "$SCRIPTDIR/../../src/"
+
 
 if [ "$PROCESS_CODECLIMATE" = true ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "${TRAVIS_BRANCH}" = "master" ]
 then
 
-    echo ""
+    composer require codeclimate/php-test-reporter:dev-master
+
+    echo -e "\e[34m"
     echo "============================"
-    echo "= Repporting code coverage ="
-    echo "============================"
+    echo -e "= \e[1m\e[33mRepporting code coverage\e[0m\e[34m ="
+    echo -e "============================\e[39m"
 
     ./vendor/bin/test-reporter
 fi
-
-echo ""
-echo "==================================="
-echo "= Processing copy/paste detection ="
-echo "==================================="
-
-php "$SCRIPTDIR/../../vendor/bin/phpcpd" --verbose --no-interaction "$SCRIPTDIR/../../src/"

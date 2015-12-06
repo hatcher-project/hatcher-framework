@@ -2,7 +2,7 @@
 /**
  * @license see LICENSE
  */
-namespace Hatcher\Test;
+namespace Hatcher\Test\TDD;
 
 use Composer\Autoload\ClassLoader;
 use Hatcher\Application;
@@ -23,16 +23,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
 
-        $this->application = $this->getMockForAbstractClass(
-            Application::class,
-            [
-                "./root",
-                new Config(["foo" => "bar"]),
-                new ClassLoader(),
-                new DI(),
-                true
-            ]
+        $this->application = new Application(
+            new Config(["foo" => "bar"]),
+            new ClassLoader(),
+            new DI(),
+            true
         );
+
     }
 
 

@@ -17,9 +17,9 @@ class RegisteredModules implements ModuleManagerInterface
      */
     protected $modules = [];
 
-    public function registerModule($moduleName, Module $module)
+    public function registerModule(Module $module)
     {
-        $this->modules[$moduleName] = $module;
+        $this->modules[$module->getName()] = $module;
     }
 
     /**

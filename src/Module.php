@@ -8,7 +8,7 @@ namespace Hatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract class Module extends ApplicationSegment
+class Module extends ApplicationSegment
 {
 
     /**
@@ -16,10 +16,23 @@ abstract class Module extends ApplicationSegment
      */
     protected $application;
 
-    public function __construct(Application $application, $rootPath, Config $config)
+    /**
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * @var ModuleAdapter
+     */
+    protected $adapter;
+
+    public function __construct(string $moduleName, ModuleAdapter $adapter, Application $application, Config $config)
     {
-        parent::__construct($rootPath, $config, new DI());
+        parent::__construct($config, new DI());
         $this->application = $application;
+        $this->name = $moduleName;
+        $this->adapter = $adapter;
+        $adapter->initializeWith($this);
     }
 
     /**
@@ -31,23 +44,19 @@ abstract class Module extends ApplicationSegment
     }
 
     /**
-     * Check if the request is valid for the module and returns true in case it is
-     *
-     * A good use case example is to match each module with a domain name and check if the domain correspond to
-     * the module
-     *
-     * When the application dispatch the request between modules, only the first module returning true will be used
-     *
-     * @param ServerRequestInterface $request
-     * @return bool true if the request is accepted by the module
+     * @return string the name of the module
      */
-    abstract public function requestMatches(ServerRequestInterface $request);
+    public function getName()
+    {
+        return $this->name;
+    }
 
     /**
-     * Dispatch the request in the module. The module is intended to return a valid response
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws \Exception if an error happens during the dispatching and the module cant return a valid response
+     * @return ModuleAdapter
      */
-    abstract public function dispatch(ServerRequestInterface $request);
+    public function getAdapter(){
+        return $this->adapter;
+    }
+
+
 }

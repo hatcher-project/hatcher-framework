@@ -7,7 +7,7 @@ namespace Hatcher;
 
 use \Composer\Autoload\ClassLoader;
 
-abstract class Application extends ApplicationSegment
+class Application extends ApplicationSegment
 {
 
     /**
@@ -20,19 +20,13 @@ abstract class Application extends ApplicationSegment
      */
     protected $dev;
 
-    /**
-     * @var ModuleManagerInterface
-     */
-    protected $moduleManager;
-
     public function __construct(
-        $rootPath,
         Config $config,
         ClassLoader $classLoader,
         DI $di,
         $devMode = false
     ) {
-        parent::__construct($rootPath, $config, $di);
+        parent::__construct($config, $di);
         $this->dev = $devMode;
         $this->classLoader = $classLoader;
     }

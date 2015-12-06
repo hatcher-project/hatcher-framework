@@ -11,8 +11,7 @@
 
     <testsuites>
         <testsuite>
-            <directory>test/suites</directory>
-            <directory>test/scenarios</directory>
+            <directory>test/suites/TDD</directory>
         </testsuite>
     </testsuites>
 

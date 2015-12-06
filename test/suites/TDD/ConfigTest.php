@@ -3,7 +3,7 @@
  * @license see LICENSE
  */
 
-namespace Hatcher\Test;
+namespace Hatcher\Test\TDD;
 
 use Hatcher\Config;
 

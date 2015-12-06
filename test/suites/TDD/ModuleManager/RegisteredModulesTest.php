@@ -2,12 +2,13 @@
 /**
  * @license see LICENSE
  */
-namespace Hatcher\Test\ModuleManager;
+namespace Hatcher\Test\TDD\ModuleManager;
 
 use Composer\Autoload\ClassLoader;
 use Hatcher\Config;
 use Hatcher\DI;
 use Hatcher\Module;
+use Hatcher\ModuleAdapter;
 use Hatcher\ModuleManager\RegisteredModules;
 use Hatcher\ModuleManager\ModuleDoesNotExistException;
 use Hatcher\Application;
@@ -28,7 +29,6 @@ class RegisteredModulesTest extends \PHPUnit_Framework_TestCase
         $this->application = $this->getMockForAbstractClass(
             Application::class,
             [
-                "./root",
                 new Config(["foo" => "bar"]),
                 new ClassLoader(),
                 new DI(),
@@ -40,11 +40,15 @@ class RegisteredModulesTest extends \PHPUnit_Framework_TestCase
     /**
      * @return Module
      */
-    protected function mockModule()
+    protected function mockModule($name)
     {
+
+        $moduleAdapter = $this->getMockForAbstractClass(ModuleAdapter::class);
+
         return $this->getMockForAbstractClass(Module::class, [
+            $name,
+            $moduleAdapter,
             $this->application,
-            "moduleRoot",
             new Config([])
         ]);
     }
@@ -53,9 +57,9 @@ class RegisteredModulesTest extends \PHPUnit_Framework_TestCase
     {
         $moduleManager = new RegisteredModules();
 
-        $moduleA = $this->mockModule();
+        $moduleA = $this->mockModule("A");
 
-        $moduleManager->registerModule("A", $moduleA);
+        $moduleManager->registerModule($moduleA);
         $this->assertSame($moduleA, $moduleManager->getModule("A"));
 
         $this->setExpectedException(ModuleDoesNotExistException::class);
@@ -67,11 +71,11 @@ class RegisteredModulesTest extends \PHPUnit_Framework_TestCase
     {
         $moduleManager = new RegisteredModules();
 
-        $moduleA = $this->mockModule();
-        $moduleB = $this->mockModule();
+        $moduleA = $this->mockModule("A");
+        $moduleB = $this->mockModule("B");
 
-        $moduleManager->registerModule("A", $moduleA);
-        $moduleManager->registerModule("B", $moduleB);
+        $moduleManager->registerModule($moduleA);
+        $moduleManager->registerModule($moduleB);
 
         $this->assertSame($moduleA, $moduleManager->getModules()["A"]);
         $this->assertSame($moduleB, $moduleManager->getModules()["B"]);
