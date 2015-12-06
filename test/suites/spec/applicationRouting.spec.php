@@ -21,49 +21,52 @@ use Zend\Diactoros\Stream;
  * @param array|null $data
  * @return \Psr\Http\Message\ServerRequestInterface|ServerRequest
  */
-function generatePSR7Request(
-    $url,
-    $method = "GET",
-    $remoteAddress = "127.0.0.1",
-    array $queryData = [],
-    array $data = null
-)
-{
-    $serverParams = ["REMOTE_ADDR" => $remoteAddress];
-    $fileParams = [];
-    $body = new Stream("php://memory", "r+");
-    $headers = [];
 
-    if (count($queryData) > 0) {
-        $url .= "?" . http_build_query($queryData);
-    }
-    $request = new ServerRequest(
-        $serverParams,
-        $fileParams,
-        $url,
-        $method,
-        $body,
-        $headers
-    );
-
-    if ($data) {
-        $request = $request->withQueryParams($queryData);
-        if ($data) {
-            $request = $request->withParsedBody($data);
-        }
-    }
-
-    return $request;
-}
 
 describe('The application routes a request', function () {
+
+
+    $generatePSR7Request = function (
+        $url,
+        $method = "GET",
+        $remoteAddress = "127.0.0.1",
+        array $queryData = [],
+        array $data = null
+    ) {
+
+        $serverParams = ["REMOTE_ADDR" => $remoteAddress];
+        $fileParams = [];
+        $body = new Stream("php://memory", "r+");
+        $headers = [];
+
+        if (count($queryData) > 0) {
+            $url .= "?" . http_build_query($queryData);
+        }
+        $request = new ServerRequest(
+            $serverParams,
+            $fileParams,
+            $url,
+            $method,
+            $body,
+            $headers
+        );
+
+        if ($data) {
+            $request = $request->withQueryParams($queryData);
+            if ($data) {
+                $request = $request->withParsedBody($data);
+            }
+        }
+
+        return $request;
+    };
 
     /* @var $application Application */
     $application = include __DIR__ . "/../../application-sample/application.php";
 
-    it('should return pong when calling /ping', function() use($application){
+    it('should return pong when calling /ping', function () use ($application, $generatePSR7Request) {
 
-        $request = generatePSR7Request("/ping", "GET", "front.hatcher.test");
+        $request = $generatePSR7Request("/ping", "GET", "front.hatcher.test");
 
         /* @var $moduleManager \Hatcher\ModuleManagerInterface */
         $moduleManager = $application->getDI()->get("moduleManager");
@@ -76,9 +79,9 @@ describe('The application routes a request', function () {
 
     });
 
-    it('should return "hello world" when calling /hello', function() use($application){
+    it('should return "hello world" when calling /hello', function () use ($application, $generatePSR7Request) {
 
-        $request = generatePSR7Request("/hello", "GET", "front.hatcher.test");
+        $request = $generatePSR7Request("/hello", "GET", "front.hatcher.test");
 
         /* @var $moduleManager \Hatcher\ModuleManagerInterface */
         $moduleManager = $application->getDI()->get("moduleManager");

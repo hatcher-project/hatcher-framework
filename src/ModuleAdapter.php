@@ -5,7 +5,6 @@
 
 namespace Hatcher;
 
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -17,7 +16,8 @@ abstract class ModuleAdapter
      */
     protected $module;
 
-    public final function initializeWith(Module $module){
+    final public function initializeWith(Module $module)
+    {
         $this->module = $module;
     }
 
@@ -40,7 +40,4 @@ abstract class ModuleAdapter
      * @return mixed
      */
     abstract public function requestIsValid(ServerRequestInterface $request);
-
-
-
 }

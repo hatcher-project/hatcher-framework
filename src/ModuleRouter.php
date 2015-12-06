@@ -15,7 +15,8 @@ class ModuleRouter
      */
     protected $moduleManager;
 
-    public function __construct(ModuleManagerInterface $moduleManager){
+    public function __construct(ModuleManagerInterface $moduleManager)
+    {
         $this->moduleManager = $moduleManager;
     }
 
@@ -23,14 +24,14 @@ class ModuleRouter
      * @param ServerRequestInterface $request
      * @return Module|null
      */
-    public function dispatchRequest(ServerRequestInterface $request){
+    public function dispatchRequest(ServerRequestInterface $request)
+    {
         $modules = $this->moduleManager->getModules();
-        foreach($modules as $module){
-            if($module->getAdapter()->requestIsValid($request)){
+        foreach ($modules as $module) {
+            if ($module->getAdapter()->requestIsValid($request)) {
                 return $module;
             }
         }
         return null;
     }
-
 }

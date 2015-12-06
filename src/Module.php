@@ -54,9 +54,8 @@ class Module extends ApplicationSegment
     /**
      * @return ModuleAdapter
      */
-    public function getAdapter(){
+    public function getAdapter()
+    {
         return $this->adapter;
     }
-
-
 }
