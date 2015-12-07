@@ -13,15 +13,6 @@ use Hatcher\ModuleRouter;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Stream;
 
-/**
- * @param $url
- * @param string $method
- * @param string $remoteAddress
- * @param array $queryData
- * @param array|null $data
- * @return \Psr\Http\Message\ServerRequestInterface|ServerRequest
- */
-
 
 describe('The application routes a request', function () {
 
