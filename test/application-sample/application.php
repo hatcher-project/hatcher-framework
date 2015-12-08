@@ -5,25 +5,18 @@
 
 namespace Hatcher;
 
-use Hatcher\ModuleManager\RegisteredModules;
+$application = new Application(
+    $GLOBALS['applicationSample'],
+    $GLOBALS['composer'],
+    [
+        "dev" => true,
+        "configFile" => "config.php",
+        "configFormat" => "php"
+    ]
+);
 
-$config = new Config([]);
-$application = new Application($config, $GLOBALS["composer"], new \Hatcher\DI(), true);
-
-$application->getDI()->set("moduleManager", function() use($application){
-
-    $moduleManager = new RegisteredModules();
-    $modulFront = new Module(
-        "frontend",
-        include __DIR__ . "/modules/frontend/module.php",
-        $application,
-        new Config([])
-    );
-    $moduleManager->registerModule($modulFront);
-
-    return $moduleManager;
-
-});
-
+$application->registerModuleNames(
+    "frontend"
+);
 
 return $application;

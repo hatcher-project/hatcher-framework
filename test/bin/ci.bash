@@ -20,7 +20,7 @@ echo -e "= \e[1m\e[33mRunning specifications\e[0m\e[34m ="
 echo -e "==========================\e[39m"
 
 
-# php "$SCRIPTDIR/../../vendor/bin/pho" -b  "$SCRIPTDIR/../../test/bootstrap-tests.php"   "$SCRIPTDIR/../../test/suites/spec/"
+php "$SCRIPTDIR/../../vendor/bin/pho" -b  "$SCRIPTDIR/../../test/bootstrap-tests.php"   "$SCRIPTDIR/../../test/suites/spec/"
 
 
 echo -e "\e[34m"

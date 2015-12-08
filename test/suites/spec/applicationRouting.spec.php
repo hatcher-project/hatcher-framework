@@ -55,30 +55,15 @@ describe('The application routes a request', function () {
     $application = include __DIR__ . "/../../application-sample/application.php";
 
     it('should return pong when calling /ping', function () use ($application, $generatePSR7Request) {
-
         $request = $generatePSR7Request("/ping", "GET", "front.hatcher.test");
-
-        /* @var $moduleManager \Hatcher\ModuleManagerInterface */
-        $moduleManager = $application->getDI()->get("moduleManager");
-
-        $moduleRouter = new ModuleRouter($moduleManager);
-        $module = $moduleRouter->dispatchRequest($request);
-        $response = $module->getAdapter()->dispatchRequest($request);
-
+        $response = $application->routeHttpRequest($request);
         expect((string)$response->getBody())->toBe("pong");
-
     });
 
     it('should return "hello world" when calling /hello', function () use ($application, $generatePSR7Request) {
 
         $request = $generatePSR7Request("/hello", "GET", "front.hatcher.test");
-
-        /* @var $moduleManager \Hatcher\ModuleManagerInterface */
-        $moduleManager = $application->getDI()->get("moduleManager");
-
-        $moduleRouter = new ModuleRouter($moduleManager);
-        $module = $moduleRouter->dispatchRequest($request);
-        $response = $module->getAdapter()->dispatchRequest($request);
+        $response = $application->routeHttpRequest($request);
 
         expect((string)$response->getBody())->toBe("hello world");
 

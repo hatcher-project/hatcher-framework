@@ -9,11 +9,12 @@ use Hatcher\Application;
 use Hatcher\Config;
 use Hatcher\DI;
 use Hatcher\ModuleManager;
+use Hatcher\Test\HatcherTestCase;
 
 /**
  * @covers Hatcher\Application
  */
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends HatcherTestCase
 {
 
     /**
@@ -23,25 +24,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-
-
-        $di = new DI();
-        $di->set("foo", function () {
-            return "bar";
-
-        });
-
-
-        $this->application = new Application(
-            $GLOBALS['applicationSample'],
-            $GLOBALS['composer'],
-            [
-                "dev" => true,
-                "configFile" => "config.php",
-                "configFormat" => "php"
-            ]
-        );
-
+        $this->application = $this->generateApplication();
     }
 
     public function testGetConfig()

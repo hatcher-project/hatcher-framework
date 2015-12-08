@@ -22,7 +22,8 @@
 
   "autoload-dev":{
     "psr-4" : {
-      "Hatcher\\Test\\"   :   "test/suites"
+      "Hatcher\\Test\\TDD\\"   :   "test/suites/TDD",
+      "Hatcher\\Test\\"   :   "test/suites/src"
     }
   },
 

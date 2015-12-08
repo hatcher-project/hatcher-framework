@@ -7,8 +7,9 @@ namespace Hatcher\Test\TDD;
 
 use Hatcher\Application;
 use Hatcher\ModuleManager;
+use Hatcher\Test\HatcherTestCase;
 
-class ModuleManagerTest extends \PHPUnit_Framework_TestCase
+class ModuleManagerTest extends HatcherTestCase
 {
 
     /**
@@ -23,15 +24,7 @@ class ModuleManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->application = new Application(
-            $GLOBALS['applicationSample'],
-            $GLOBALS['composer'],
-            [
-                "dev" => true,
-                "configFile" => "config.php",
-                "configFormat" => "php"
-            ]
-        );
+        $this->application = $this->generateApplication();
 
         $this->moduleManager = $this->application->getModuleManager();
     }

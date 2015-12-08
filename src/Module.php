@@ -29,8 +29,7 @@ class Module extends ApplicationSegment
 
     public function __construct(string $moduleName, string $directory, Application $application)
     {
-
-        $di = new DirectoryDi("services");
+        $di = new DirectoryDi($directory . "/services");
         $this->adapter = include $directory . "/module.php";
 
         $options = $this->adapter->getOptions();
@@ -64,6 +63,11 @@ class Module extends ApplicationSegment
 
     public function dispatchRequest(ServerRequestInterface $request)
     {
-        return $this->adapter->dispatchRequest($request);
+        return $this->adapter->dispatchRequest($this, $request);
+    }
+
+    public function requestMatches(ServerRequestInterface $request)
+    {
+        return $this->adapter->requestIsValid($this, $request);
     }
 }

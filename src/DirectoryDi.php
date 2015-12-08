@@ -24,7 +24,11 @@ class DirectoryDi extends DI
     public function get($what)
     {
         if (!isset($this->container[$what])) {
-            $this->set($what, include $this->directory . "/$what.php");
+            $service = include $this->directory . "/$what.php";
+            if (! is_callable($service)) {
+                throw new Exception("Bad service type. The file $this->directory/$what.php should return a callable");
+            }
+            $this->set($what, $service);
         }
         return $this->container[$what];
     }

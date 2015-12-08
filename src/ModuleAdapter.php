@@ -21,5 +21,7 @@ abstract class ModuleAdapter
      * @param ServerRequestInterface $request the input request
      * @return ResponseInterface the http response to send back
      */
-    abstract public function dispatchRequest(ServerRequestInterface $request);
+    abstract public function dispatchRequest(Module $module, ServerRequestInterface $request): ResponseInterface;
+
+    abstract public function requestIsValid(Module $module, ServerRequestInterface $request): bool;
 }

@@ -8,6 +8,7 @@ namespace Hatcher;
 use \Composer\Autoload\ClassLoader;
 use Hatcher\Application\DefaultOptions;
 use Hatcher\Config\ConfigFactory;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Application extends ApplicationSegment
 {
@@ -39,10 +40,15 @@ class Application extends ApplicationSegment
         );
 
         parent::__construct($directory, $di, $configFactory);
-        $this->dev = (bool) ($options["dev"] ?? true);
+        $this->dev = (bool)($options["dev"] ?? true);
         $this->classLoader = $classLoader;
 
         $this->moduleManager = new ModuleManager($this->resolvePath($options["moduleDirectory"] ?? "modules"), $this);
+    }
+
+    public function registerModuleNames(string ...$names)
+    {
+        $this->moduleManager->registerModuleNames($names);
     }
 
     /**
@@ -66,5 +72,17 @@ class Application extends ApplicationSegment
     public function getModuleManager()
     {
         return $this->moduleManager;
+    }
+
+    public function routeHttpRequest(ServerRequestInterface $request)
+    {
+        foreach ($this->moduleManager->getModuleNames() as $moduleName) {
+            $module = $this->moduleManager->getModule($moduleName);
+            if ($this->moduleManager->getModule($moduleName)->requestMatches($request)) {
+                return $module->dispatchRequest($request);
+            }
+        }
+
+        throw new Exception("No module matched the request");
     }
 }
