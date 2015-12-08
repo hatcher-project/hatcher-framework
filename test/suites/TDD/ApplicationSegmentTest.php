@@ -24,9 +24,13 @@ class ApplicationSegmentTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $di = new DI();
+        $di->set("foo", function(){return "bar";});
+
         $this->application = new ApplicationSegment(
-            new Config(["foo" => "bar"]),
-            new DI()
+            $GLOBALS['applicationSample'],
+            $di,
+            new Config\ConfigFactory($GLOBALS["applicationSample"] . "/config.php", "php", null)
         );
     }
 
@@ -41,5 +45,16 @@ class ApplicationSegmentTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(Config::class, $this->application->getConfig());
         $this->assertEquals("bar", $this->application->getConfig()->get("foo"));
+    }
+
+    public function  test__get(){
+        $this->assertEquals("bar", $this->application->foo);
+        $this->assertInstanceOf(Config::class, $this->application->config);
+    }
+
+
+    public function testResolvePath(){
+        $this->assertEquals($GLOBALS["applicationSample"], $this->application->resolvePath());
+        $this->assertEquals($GLOBALS["applicationSample"] . "/bar", $this->application->resolvePath("bar"));
     }
 }

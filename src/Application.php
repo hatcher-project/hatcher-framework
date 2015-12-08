@@ -6,6 +6,8 @@
 namespace Hatcher;
 
 use \Composer\Autoload\ClassLoader;
+use Hatcher\Application\DefaultOptions;
+use Hatcher\Config\ConfigFactory;
 
 class Application extends ApplicationSegment
 {
@@ -20,15 +22,26 @@ class Application extends ApplicationSegment
      */
     protected $dev;
 
-    public function __construct(
-        Config $config,
-        ClassLoader $classLoader,
-        DI $di,
-        $devMode = false
-    ) {
-        parent::__construct($config, $di);
-        $this->dev = $devMode;
+    /**
+     * @var ModuleManager
+     */
+    protected $moduleManager;
+
+    public function __construct(string $directory, ClassLoader $classLoader, array $options = []) {
+
+        $di = new DirectoryDi($options["servicesDirectory"] ?? "services");
+
+        $configFactory = new ConfigFactory(
+            $directory . "/" . $options["configFile"] ?? "config.yaml",
+            $options["configFormat"] ?? "yaml",
+            $options["cache"] ?? null
+        );
+
+        parent::__construct($directory, $di, $configFactory);
+        $this->dev = (bool) $options["dev"] ?? true;
         $this->classLoader = $classLoader;
+
+        $this->moduleManager = new ModuleManager($this->resolvePath($options["moduleDirectory"] ?? "modules"), $this);
     }
 
     /**
@@ -47,5 +60,9 @@ class Application extends ApplicationSegment
     public function getClassLoader()
     {
         return $this->classLoader;
+    }
+
+    public function getModuleManager(){
+        return $this->moduleManager;
     }
 }

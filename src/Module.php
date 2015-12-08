@@ -26,13 +26,11 @@ class Module extends ApplicationSegment
      */
     protected $adapter;
 
-    public function __construct(string $moduleName, ModuleAdapter $adapter, Application $application, Config $config)
+    public function __construct(string $moduleName, string $directory, Application $application)
     {
-        parent::__construct($config, new DI());
+        parent::__construct($directory, $config, new DI());
         $this->application = $application;
         $this->name = $moduleName;
-        $this->adapter = $adapter;
-        $adapter->initializeWith($this);
     }
 
     /**
@@ -56,6 +54,11 @@ class Module extends ApplicationSegment
      */
     public function getAdapter()
     {
+
+        if(!$this->adapter){
+
+        }
+
         return $this->adapter;
     }
 }

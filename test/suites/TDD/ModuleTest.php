@@ -23,9 +23,8 @@ class ModuleTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->application = new Application(
-            new Config(["foo" => "bar"]),
+            "root",
             new ClassLoader(),
-            new DI(),
             true
         );
     }
@@ -36,11 +35,10 @@ class ModuleTest extends \PHPUnit_Framework_TestCase
      */
     protected function mockModule($name)
     {
-        $moduleAdapter = $this->getMockForAbstractClass(ModuleAdapter::class);
 
         return $this->getMockForAbstractClass(Module::class, [
             $name,
-            $moduleAdapter,
+            "root",
             $this->application,
             new Config([])
         ]);

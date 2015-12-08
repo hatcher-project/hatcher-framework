@@ -10,7 +10,6 @@ use Pimple\Container;
 class DI
 {
 
-
     /**
      * @var Container
      */
@@ -40,5 +39,9 @@ class DI
     public function set($what, callable $callable)
     {
         $this->container[$what] = $callable;
+    }
+
+    public function has($what){
+        return isset($this->container[$what]);
     }
 }

@@ -29,6 +29,7 @@ class RegisteredModulesTest extends \PHPUnit_Framework_TestCase
         $this->application = $this->getMockForAbstractClass(
             Application::class,
             [
+                "root",
                 new Config(["foo" => "bar"]),
                 new ClassLoader(),
                 new DI(),
@@ -43,11 +44,10 @@ class RegisteredModulesTest extends \PHPUnit_Framework_TestCase
     protected function mockModule($name)
     {
 
-        $moduleAdapter = $this->getMockForAbstractClass(ModuleAdapter::class);
 
         return $this->getMockForAbstractClass(Module::class, [
             $name,
-            $moduleAdapter,
+            "root",
             $this->application,
             new Config([])
         ]);
