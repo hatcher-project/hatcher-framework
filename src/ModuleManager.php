@@ -5,7 +5,6 @@
 
 namespace Hatcher;
 
-
 use Hatcher\ModuleManager\ModuleDoesNotExistException;
 
 class ModuleManager
@@ -16,7 +15,8 @@ class ModuleManager
      */
     protected $application;
 
-    public function __construct($baseDirectory, Application $application){
+    public function __construct($baseDirectory, Application $application)
+    {
         $this->directory = $baseDirectory;
         $this->application = $application;
     }
@@ -32,20 +32,16 @@ class ModuleManager
     public function getModule($name)
     {
         if (!isset($this->modules[$name])) {
-
             $path = "$this->directory" . "/$name";
-
             $this->modules[$name] = new Module($name, $path, $this->application);
-
-
-
-        } else {
-            return $this->modules[$name];
         }
+
+        return $this->modules[$name];
+
     }
 
-    public function hasModule($name){
+    public function hasModule($name)
+    {
         return isset($this->modules[$name]) ?? file_exists("$this->directory" . "/$name");
     }
-
 }

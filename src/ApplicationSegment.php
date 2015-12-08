@@ -8,7 +8,6 @@ namespace Hatcher;
 use Hatcher\Application\DefaultConfig as ApplicationDefaultConfig;
 use Hatcher\Config\ConfigFactory;
 
-
 /**
  * Represents a segment of the application: an object
  * that contains a config and a service locator (DI)
@@ -63,7 +62,7 @@ class ApplicationSegment
      */
     public function getConfig()
     {
-        if(!$this->config){
+        if (!$this->config) {
             $this->config = $this->configFactory->read();
         }
         return $this->config;
@@ -87,13 +86,12 @@ class ApplicationSegment
     /**
      * Provide shortcut to get config object or services
      */
-    function __get($name)
+    public function __get($name)
     {
-        if('config' == $name){
+        if ('config' == $name) {
             return $this->getConfig();
-        }else{
+        } else {
             return  $this->getDI()->get($name);
         }
     }
-
 }

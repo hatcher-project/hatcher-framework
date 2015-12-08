@@ -26,7 +26,10 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
 
         $di = new DI();
-        $di->set("foo", function(){return "bar";});
+        $di->set("foo", function () {
+            return "bar";
+
+        });
 
 
         $this->application = new Application(

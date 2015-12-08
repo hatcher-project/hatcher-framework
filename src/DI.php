@@ -41,7 +41,8 @@ class DI
         $this->container[$what] = $callable;
     }
 
-    public function has($what){
+    public function has($what)
+    {
         return isset($this->container[$what]);
     }
 }

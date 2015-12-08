@@ -25,7 +25,10 @@ class ApplicationSegmentTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $di = new DI();
-        $di->set("foo", function(){return "bar";});
+        $di->set("foo", function () {
+            return "bar";
+
+        });
 
         $this->application = new ApplicationSegment(
             $GLOBALS['applicationSample'],
@@ -47,13 +50,15 @@ class ApplicationSegmentTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("bar", $this->application->getConfig()->get("foo"));
     }
 
-    public function  test__get(){
+    public function testMagicGet()
+    {
         $this->assertEquals("bar", $this->application->foo);
         $this->assertInstanceOf(Config::class, $this->application->config);
     }
 
 
-    public function testResolvePath(){
+    public function testResolvePath()
+    {
         $this->assertEquals($GLOBALS["applicationSample"], $this->application->resolvePath());
         $this->assertEquals($GLOBALS["applicationSample"] . "/bar", $this->application->resolvePath("bar"));
     }

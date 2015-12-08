@@ -18,35 +18,30 @@ use Hatcher\ModuleAdapter;
 class ModuleTest extends \PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @var Application
+     */
     protected $application;
+
+
+    /**
+     * @var Module
+     */
+    protected $module;
 
     public function setUp()
     {
         $this->application = new Application(
-            "root",
+            $GLOBALS["applicationSample"],
             new ClassLoader(),
-            true
+            []
         );
+        $this->module = new Module("frontend", $this->application->resolvePath("modules/frontend"), $this->application);
     }
 
-
-    /**
-     * @return Module
-     */
-    protected function mockModule($name)
-    {
-
-        return $this->getMockForAbstractClass(Module::class, [
-            $name,
-            "root",
-            $this->application,
-            new Config([])
-        ]);
-    }
 
     public function testGetApplication()
     {
-        $module = $this->mockModule("A");
-        $this->assertSame($this->application, $module->getApplication());
+        $this->assertSame($this->application, $this->module->getApplication());
     }
 }

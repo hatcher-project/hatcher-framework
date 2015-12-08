@@ -5,6 +5,7 @@
 
 namespace Hatcher;
 
+use Hatcher\Config\ConfigFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -28,7 +29,19 @@ class Module extends ApplicationSegment
 
     public function __construct(string $moduleName, string $directory, Application $application)
     {
-        parent::__construct($directory, $config, new DI());
+
+        $di = new DirectoryDi("services");
+        $this->adapter = include $directory . "/module.php";
+
+        $options = $this->adapter->getOptions();
+
+        $configFactory = new ConfigFactory(
+            $directory . "/" . ($options["configFile"] ?? "config.yaml"),
+            $options["configFormat"] ?? "yaml",
+            $options["cache"] ?? null
+        );
+
+        parent::__construct($directory, $di, $configFactory);
         $this->application = $application;
         $this->name = $moduleName;
     }
@@ -49,16 +62,8 @@ class Module extends ApplicationSegment
         return $this->name;
     }
 
-    /**
-     * @return ModuleAdapter
-     */
-    public function getAdapter()
+    public function dispatchRequest(ServerRequestInterface $request)
     {
-
-        if(!$this->adapter){
-
-        }
-
-        return $this->adapter;
+        return $this->adapter->dispatchRequest($request);
     }
 }

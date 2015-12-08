@@ -10,14 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 return new class extends ModuleAdapter{
 
 
-    protected $setup = false;
-
-    public function setup(){
-        if(!$this->setup){
-            $this->module->getDI()->set('router', include __DIR__ . "/services/router.php");
-            $this->setup = true;
-        }
-    }
 
     public function dispatchRequest(ServerRequestInterface $request){
         /* @var $router \Aura\Router\RouterContainer */

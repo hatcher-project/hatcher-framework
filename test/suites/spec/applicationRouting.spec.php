@@ -13,7 +13,6 @@ use Hatcher\ModuleRouter;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Stream;
 
-
 describe('The application routes a request', function () {
 
 

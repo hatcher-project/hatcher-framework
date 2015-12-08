@@ -28,22 +28,22 @@ class ConfigFactory
     }
 
 
-    public function read(){
+    public function read()
+    {
         // TODO cache
 
         $config = null;
-        switch($this->format){
+        switch ($this->format) {
             case "php":
                 $config = include $this->file;
                 break;
         }
 
-        if(null==$config){
+        if (null==$config) {
             throw new \Exception("Config reader type $this->format does not exist");
-        }else{
+        } else {
             return new Config($config);
         }
 
     }
-
 }

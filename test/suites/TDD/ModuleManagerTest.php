@@ -5,7 +5,6 @@
 
 namespace Hatcher\Test\TDD;
 
-
 use Hatcher\Application;
 use Hatcher\ModuleManager;
 
@@ -22,7 +21,8 @@ class ModuleManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $application;
 
-    public function setUp(){
+    public function setUp()
+    {
         $this->application = new Application(
             $GLOBALS['applicationSample'],
             $GLOBALS['composer'],
@@ -36,12 +36,14 @@ class ModuleManagerTest extends \PHPUnit_Framework_TestCase
         $this->moduleManager = $this->application->getModuleManager();
     }
 
-    public function testGetModule(){
+
+
+    public function testGetModule()
+    {
 
         $module = $this->moduleManager->getModule("frontend");
 
         $this->assertEquals("frontend", $module->getName());
 
     }
-
 }

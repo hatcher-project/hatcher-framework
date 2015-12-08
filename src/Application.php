@@ -27,18 +27,19 @@ class Application extends ApplicationSegment
      */
     protected $moduleManager;
 
-    public function __construct(string $directory, ClassLoader $classLoader, array $options = []) {
+    public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
+    {
 
-        $di = new DirectoryDi($options["servicesDirectory"] ?? "services");
+        $di = new DirectoryDi($directory . "/services");
 
         $configFactory = new ConfigFactory(
-            $directory . "/" . $options["configFile"] ?? "config.yaml",
+            $directory . "/" . ($options["configFile"] ?? "config.yaml"),
             $options["configFormat"] ?? "yaml",
             $options["cache"] ?? null
         );
 
         parent::__construct($directory, $di, $configFactory);
-        $this->dev = (bool) $options["dev"] ?? true;
+        $this->dev = (bool) ($options["dev"] ?? true);
         $this->classLoader = $classLoader;
 
         $this->moduleManager = new ModuleManager($this->resolvePath($options["moduleDirectory"] ?? "modules"), $this);
@@ -62,7 +63,8 @@ class Application extends ApplicationSegment
         return $this->classLoader;
     }
 
-    public function getModuleManager(){
+    public function getModuleManager()
+    {
         return $this->moduleManager;
     }
 }
