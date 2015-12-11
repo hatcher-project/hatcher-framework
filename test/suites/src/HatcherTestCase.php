@@ -22,8 +22,6 @@ class HatcherTestCase extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $application->registerModuleNames("frontend");
-
         return $application;
     }
 }

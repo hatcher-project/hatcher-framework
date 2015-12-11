@@ -18,25 +18,19 @@ class ModuleManagerTest extends HatcherTestCase
     protected $moduleManager;
 
     /**
-     * @var Application
+     * @var \Hatcher\Application
      */
     protected $application;
 
     public function setUp()
     {
         $this->application = $this->generateApplication();
-
-        $this->moduleManager = $this->application->getModuleManager();
+        $this->moduleManager = $this->application->moduleManager;
     }
-
-
 
     public function testGetModule()
     {
-
         $module = $this->moduleManager->getModule("frontend");
-
         $this->assertEquals("frontend", $module->getName());
-
     }
 }

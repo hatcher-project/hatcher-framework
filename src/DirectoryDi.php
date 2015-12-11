@@ -8,12 +8,15 @@ namespace Hatcher;
 class DirectoryDi extends DI
 {
 
+    /**
+     * @var string
+     */
     protected $directory;
 
-    public function __construct($directory)
+    public function __construct(string $directory, array $callParams = [])
     {
+        parent::__construct($callParams);
         $this->directory = $directory;
-        parent::__construct();
     }
 
     /**
@@ -23,18 +26,14 @@ class DirectoryDi extends DI
      */
     public function get($what)
     {
-        if (!isset($this->container[$what])) {
-            $service = include $this->directory . "/$what.php";
-            if (! is_callable($service)) {
-                throw new Exception("Bad service type. The file $this->directory/$what.php should return a callable");
+        if (!$this->registered($what)) {
+            $file = $this->directory . "/$what.php";
+            $service = include $file;
+            if (!is_callable($service)) {
+                throw new Exception(sprintf('Bad service type. The file%s should return a callable', $file));
             }
             $this->set($what, $service);
         }
-        return $this->container[$what];
-    }
-
-    public function has($what)
-    {
-        return isset($this->container[$what]) ?? file_exists($this->directory . "/$what.php");
+        return parent::get($what);
     }
 }

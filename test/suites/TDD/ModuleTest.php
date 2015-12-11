@@ -19,7 +19,7 @@ class ModuleTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var Application
+     * @var \Hatcher\Application
      */
     protected $application;
 

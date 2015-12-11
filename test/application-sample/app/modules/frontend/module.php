@@ -24,10 +24,4 @@ return new class extends ModuleAdapter{
         return ($match->handler)($request);
     }
 
-    public function requestIsValid(Module $module, ServerRequestInterface $request): bool
-    {
-        $addr = $request->getServerParams()["REMOTE_ADDR"];
-        return $addr == "front.hatcher.test" || $addr == "127.0.0.1";
-    }
-
 };

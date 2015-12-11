@@ -18,7 +18,7 @@ class ApplicationTest extends HatcherTestCase
 {
 
     /**
-     * @var Application
+     * @var \Hatcher\Application
      */
     protected $application;
 
@@ -26,13 +26,6 @@ class ApplicationTest extends HatcherTestCase
     {
         $this->application = $this->generateApplication();
     }
-
-    public function testGetConfig()
-    {
-        $this->assertInstanceOf(Config::class, $this->application->getConfig());
-        $this->assertEquals("bar", $this->application->getConfig()->get("foo"));
-    }
-
 
     public function testIsDev()
     {
@@ -42,10 +35,5 @@ class ApplicationTest extends HatcherTestCase
     public function testGetClassLoader()
     {
         $this->assertInstanceOf(ClassLoader::class, $this->application->getClassLoader());
-    }
-
-    public function testGetModuleManager()
-    {
-        $this->assertInstanceOf(ModuleManager::class, $this->application->getModuleManager());
     }
 }

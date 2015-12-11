@@ -5,6 +5,7 @@
 
 namespace Hatcher;
 
+use Hatcher\Application;
 use Hatcher\Config\ConfigFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,16 +32,10 @@ class Module extends ApplicationSegment
     {
         $di = new DirectoryDi($directory . "/services");
         $this->adapter = include $directory . "/module.php";
+        //$options = $this->adapter->getOptions();
 
-        $options = $this->adapter->getOptions();
 
-        $configFactory = new ConfigFactory(
-            $directory . "/" . ($options["configFile"] ?? "config.yaml"),
-            $options["configFormat"] ?? "yaml",
-            $options["cache"] ?? null
-        );
-
-        parent::__construct($directory, $di, $configFactory);
+        parent::__construct($directory, $di);
         $this->application = $application;
         $this->name = $moduleName;
     }
@@ -64,10 +59,5 @@ class Module extends ApplicationSegment
     public function dispatchRequest(ServerRequestInterface $request)
     {
         return $this->adapter->dispatchRequest($this, $request);
-    }
-
-    public function requestMatches(ServerRequestInterface $request)
-    {
-        return $this->adapter->requestIsValid($this, $request);
     }
 }

@@ -5,18 +5,14 @@
 
 namespace Hatcher;
 
+use Hatcher\Application;
+
 $application = new Application(
     $GLOBALS['applicationSample'],
     $GLOBALS['composer'],
     [
-        "dev" => true,
-        "configFile" => "config.php",
-        "configFormat" => "php"
+        "dev" => true
     ]
-);
-
-$application->registerModuleNames(
-    "frontend"
 );
 
 return $application;

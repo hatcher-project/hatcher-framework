@@ -5,6 +5,13 @@
 
 namespace Hatcher;
 
+use Hatcher\Application;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+/**
+ * Bundles of modules that allows create modules and to route a request to the good module
+ */
 class ModuleManager
 {
     protected $directory;
@@ -30,9 +37,9 @@ class ModuleManager
      * $manager->registerModuleNames("frontend", "backend", "api");
      * @param string ...$modules list of modules
      */
-    public function registerModuleNames(array $names)
+    public function registerModule(string $name, callable $matcher)
     {
-        $this->moduleNames += $names;
+        $this->moduleNames[$name]= ["matcher" => $matcher] ;
     }
 
 
@@ -45,11 +52,11 @@ class ModuleManager
     public function getModule(string $name): Module
     {
         if (!isset($this->modules[$name])) {
-            if (!in_array($name, $this->moduleNames)) {
-                throw new Exception("No module was registered with the name '$name'");
+            if (!isset($this->moduleNames[$name])) {
+                throw new Exception(sprintf('No module was registered with the name "%s"', $name));
             }
 
-            $path = "$this->directory" . "/$name";
+            $path = $this->directory . '/' . $name;
             $this->modules[$name] = new Module($name, $path, $this->application);
         }
         return $this->modules[$name];
@@ -57,7 +64,7 @@ class ModuleManager
 
     public function hasModule($name)
     {
-        return isset($this->modules[$name]) ?? file_exists("$this->directory" . "/$name");
+        return isset($this->moduleNames[$name]);
     }
 
     /**
@@ -66,6 +73,22 @@ class ModuleManager
      */
     public function getModuleNames(): array
     {
-        return $this->moduleNames;
+        return array_keys($this->moduleNames);
+    }
+
+    /**
+     * Route the request
+     * @param ServerRequestInterface $request
+     * @return Module
+     * @throws Exception
+     */
+    public function getModuleForRequest(ServerRequestInterface $request): Module
+    {
+        foreach ($this->moduleNames as $moduleName => $modulDef) {
+            if ($modulDef["matcher"]($request)) {
+                return $this->getModule($moduleName);
+            }
+        }
+        throw new Exception('No module matched the request');
     }
 }

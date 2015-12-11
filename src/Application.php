@@ -6,10 +6,19 @@
 namespace Hatcher;
 
 use \Composer\Autoload\ClassLoader;
-use Hatcher\Application\DefaultOptions;
-use Hatcher\Config\ConfigFactory;
+use Hatcher\ApplicationSegment;
+use Hatcher\Config;
+use Hatcher\DirectoryDi;
+use Hatcher\Exception;
+use Hatcher\ModuleManager;
 use Psr\Http\Message\ServerRequestInterface;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run as WhoopsRun;
 
+/**
+ * @property Config $config
+ * @property ModuleManager $moduleManager
+ */
 class Application extends ApplicationSegment
 {
 
@@ -23,33 +32,18 @@ class Application extends ApplicationSegment
      */
     protected $dev;
 
-    /**
-     * @var ModuleManager
-     */
-    protected $moduleManager;
+
 
     public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
     {
-
-        $di = new DirectoryDi($directory . "/services");
-
-        $configFactory = new ConfigFactory(
-            $directory . "/" . ($options["configFile"] ?? "config.yaml"),
-            $options["configFormat"] ?? "yaml",
-            $options["cache"] ?? null
-        );
-
-        parent::__construct($directory, $di, $configFactory);
+        $di = new DirectoryDi($directory . "/services", [$this]);
+        parent::__construct($directory, $di);
         $this->dev = (bool)($options["dev"] ?? true);
         $this->classLoader = $classLoader;
 
-        $this->moduleManager = new ModuleManager($this->resolvePath($options["moduleDirectory"] ?? "modules"), $this);
+        $this->registerErrorHandler();
     }
 
-    public function registerModuleNames(string ...$names)
-    {
-        $this->moduleManager->registerModuleNames($names);
-    }
 
     /**
      * The application is running in dev environment
@@ -69,20 +63,18 @@ class Application extends ApplicationSegment
         return $this->classLoader;
     }
 
-    public function getModuleManager()
-    {
-        return $this->moduleManager;
-    }
-
     public function routeHttpRequest(ServerRequestInterface $request)
     {
-        foreach ($this->moduleManager->getModuleNames() as $moduleName) {
-            $module = $this->moduleManager->getModule($moduleName);
-            if ($this->moduleManager->getModule($moduleName)->requestMatches($request)) {
-                return $module->dispatchRequest($request);
-            }
-        }
+        $module = $this->moduleManager->getModuleForRequest($request);
+        return $module->dispatchRequest($request);
+    }
 
-        throw new Exception("No module matched the request");
+    protected function registerErrorHandler()
+    {
+        $run     = new WhoopsRun;
+        $handler = new PrettyPageHandler;
+        $run->pushHandler($handler);
+        $run->register();
+
     }
 }

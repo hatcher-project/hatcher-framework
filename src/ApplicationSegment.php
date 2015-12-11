@@ -5,28 +5,17 @@
 
 namespace Hatcher;
 
-use Hatcher\Application\DefaultConfig as ApplicationDefaultConfig;
-use Hatcher\Config\ConfigFactory;
+use Hatcher\DI;
 
 /**
- * Represents a segment of the application: an object
- * that contains a config and a service locator (DI)
+ * Represents a segment of the application
  *
- * @property Config $config
+ * It is located in the file system and offers a service locator
+ * that contains service locator
  *
  */
 class ApplicationSegment
 {
-
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var ConfigFactory
-     */
-    protected $configFactory;
 
     /**
      * @var DI
@@ -40,11 +29,10 @@ class ApplicationSegment
 
 
 
-    public function __construct(string $directory, DI $di, ConfigFactory $configFactory)
+    public function __construct(string $directory, DI $di)
     {
         $this->directory = $directory;
         $this->di = $di;
-        $this->configFactory = $configFactory;
     }
 
     /**
@@ -56,17 +44,6 @@ class ApplicationSegment
         return $this->di;
     }
 
-    /**
-     * The application configuration
-     * @return Config
-     */
-    public function getConfig()
-    {
-        if (!$this->config) {
-            $this->config = $this->configFactory->read();
-        }
-        return $this->config;
-    }
 
     /**
      * Find a path from the application root
@@ -88,10 +65,6 @@ class ApplicationSegment
      */
     public function __get($name)
     {
-        if ('config' == $name) {
-            return $this->getConfig();
-        } else {
-            return  $this->getDI()->get($name);
-        }
+        return  $this->getDI()->get($name);
     }
 }

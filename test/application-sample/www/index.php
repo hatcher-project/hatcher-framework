@@ -4,18 +4,12 @@
  */
 
 
+
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Run as WhoopsRun;
 use \Hatcher\Exception\NoRouteMatchException;
 
 $composer = include __DIR__ . "/../../../vendor/autoload.php";
-
-$run     = new WhoopsRun;
-$handler = new PrettyPageHandler;
-$run->pushHandler($handler);
-$run->register();
 
 $GLOBALS["composer"] = $composer;
 $GLOBALS["applicationSample"] = __DIR__ . "/../app";

@@ -52,3 +52,8 @@ then
 
     ./vendor/bin/test-reporter
 fi
+
+
+echo
+echo -e "\e[1m\e[42mAll test passed!\e[0m"
+echo
