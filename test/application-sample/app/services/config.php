@@ -7,9 +7,9 @@ namespace Hatcher;
 
 use Hatcher\Application;
 
-return function(Application $app){
+return function (Application $app) {
 
-    $configRaw = include $app->resolvePath("config.php");
+    $configRaw = include $app->resolvePath('config.php');
 
     $config = new Config($configRaw);
 

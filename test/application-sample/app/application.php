@@ -11,11 +11,11 @@ $application = new Application(
     __DIR__,
     $GLOBALS['composer'],
     [
-        "dev" => false
+        'dev' => false
     ]
 );
 
 $moduleManager = $application->getModuleManager();
-$moduleManager->registerModule("frontend", $application->config->get("modules.front.matcher"));
+$moduleManager->registerModule('frontend', $application->config->get('modules.front.matcher'));
 
 return $application;

@@ -7,6 +7,6 @@ namespace Hatcher;
 
 use Hatcher\Application;
 
-return function(){
+return function () {
     return 'fooService';
 };

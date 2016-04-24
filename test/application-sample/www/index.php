@@ -9,22 +9,22 @@ use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
 use \Hatcher\Exception\NoRouteMatchException;
 
-$composer = include __DIR__ . "/../../../vendor/autoload.php";
+$composer = include __DIR__ . '/../../../vendor/autoload.php';
 
-$GLOBALS["composer"] = $composer;
-$GLOBALS["applicationSample"] = __DIR__ . "/../app";
+$GLOBALS['composer'] = $composer;
+$GLOBALS['applicationSample'] = __DIR__ . '/../app';
 
 /* @var $application \Hatcher\Application */
-$application = include __DIR__ . "/../app/application.php";
+$application = include __DIR__ . '/../app/application.php';
 
 $request = ServerRequestFactory::fromGlobals();
 
-try{
+try {
     $response = $application->routeHttpRequest($request);
-}catch(NoRouteMatchException $e){
-    if($application->isDev()){
+} catch (NoRouteMatchException $e) {
+    if ($application->isDev()) {
         throw $e;
-    }else{
+    } else {
         // SHOW 404
     }
 }

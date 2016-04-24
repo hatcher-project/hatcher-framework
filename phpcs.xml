@@ -3,6 +3,7 @@
 
     <file>./src/</file>
     <file>./test/suites</file>
+    <file>./test/application-sample</file>
 
     <!--The complete PSR-2 ruleset-->
     <rule ref="PSR2"/>
@@ -23,6 +24,10 @@
     <!-- By default we use single quote only. Double quotes come when a variable is inside -->
     <rule ref="Squiz.Strings.DoubleQuoteUsage">
         <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar"/>
+    </rule>
+    <!-- By default we use single quote only. Double quotes come when a variable is inside -->
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <exclude-pattern>./test/application-sample/*</exclude-pattern>
     </rule>
 
     <!-- Disallow some function like var_dump -->
