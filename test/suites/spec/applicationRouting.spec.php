@@ -24,7 +24,7 @@ describe('The application routes a request', function () {
         array $data = null
     ) {
 
-        $serverParams = ['REMOTE_ADDR' => $remoteAddress];
+        $serverParams = ['SERVER_NAME' => $remoteAddress];
         $fileParams = [];
         $body = new Stream('php://memory', 'r+');
         $headers = [];

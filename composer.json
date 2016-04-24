@@ -17,15 +17,15 @@
   "autoload":{
     "psr-4" : {
       "Hatcher\\"   :   "src/"
-    }
+    },
+    "files": ["src/functions.php"]
   },
 
   "autoload-dev":{
     "psr-4" : {
       "Hatcher\\Test\\TDD\\"   :   "test/suites/TDD",
       "Hatcher\\Test\\"   :   "test/suites/src"
-    },
-    "files": ["src/functions.php"]
+    }
   },
 
   "require": {
