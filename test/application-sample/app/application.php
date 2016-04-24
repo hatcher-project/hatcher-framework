@@ -11,7 +11,7 @@ $application = new Application(
     $GLOBALS['applicationSample'],
     $GLOBALS['composer'],
     [
-        "dev" => true
+        "dev" => false
     ]
 );
 

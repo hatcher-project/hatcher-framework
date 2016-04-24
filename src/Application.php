@@ -11,6 +11,7 @@ use Hatcher\Config;
 use Hatcher\DirectoryDi;
 use Hatcher\Exception;
 use Hatcher\ModuleManager;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run as WhoopsRun;
@@ -32,8 +33,6 @@ class Application extends ApplicationSegment
      */
     protected $dev;
 
-
-
     public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
     {
         $di = new DirectoryDi($directory . '/services', [$this]);
@@ -41,7 +40,9 @@ class Application extends ApplicationSegment
         $this->dev = (bool)($options['dev'] ?? true);
         $this->classLoader = $classLoader;
 
-        $this->registerErrorHandler();
+        if($this->isDev()) {
+            $this->registerErrorHandler();
+        }
     }
 
 
@@ -58,14 +59,16 @@ class Application extends ApplicationSegment
      * The application classLoader from composer. Aims to dynamically register module paths
      * @return ClassLoader
      */
-    public function getClassLoader()
+    public function getClassLoader(): ClassLoader
     {
         return $this->classLoader;
     }
 
-    public function routeHttpRequest(ServerRequestInterface $request)
+    public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface
     {
-        $module = $this->moduleManager->getModuleForRequest($request);
+        $module = $this->moduleManager
+            ->getModuleForRequest($request);
+
         return $module->dispatchRequest($request);
     }
 
@@ -75,6 +78,5 @@ class Application extends ApplicationSegment
         $handler = new PrettyPageHandler;
         $run->pushHandler($handler);
         $run->register();
-
     }
 }
