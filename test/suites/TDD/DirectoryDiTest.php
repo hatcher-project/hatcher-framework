@@ -19,6 +19,4 @@ class DirectoryDiTest extends \PHPUnit_Framework_TestCase
         $di = new DirectoryDi($GLOBALS['applicationSample'] . '/services');
         $this->assertEquals('fooService', $di->get('foo'));
     }
-
-
 }

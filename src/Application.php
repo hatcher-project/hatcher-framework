@@ -40,7 +40,7 @@ class Application extends ApplicationSegment
         $this->dev = (bool)($options['dev'] ?? true);
         $this->classLoader = $classLoader;
 
-        if($this->isDev()) {
+        if ($this->isDev()) {
             $this->registerErrorHandler();
         }
     }
