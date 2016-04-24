@@ -21,7 +21,7 @@ return new class extends ModuleAdapter{
             throw new NoRouteMatchException("No route matched the request");
         }
 
-        return ($match->handler)($request);
+        return call_user_func($match->handler, $request);
     }
 
 };

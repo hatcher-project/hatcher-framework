@@ -11,7 +11,6 @@ use Hatcher\DI;
  * Represents a segment of the application
  *
  * It is located in the file system and offers a service locator
- * that contains service locator
  *
  */
 class ApplicationSegment

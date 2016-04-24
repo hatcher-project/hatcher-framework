@@ -33,9 +33,9 @@ class ModuleManager
     }
 
     /**
-     * Register a list of modules in the manager
-     * $manager->registerModuleNames("frontend", "backend", "api");
-     * @param string ...$modules list of modules
+     * Registers a module in the application
+     * @param string $name
+     * @param callable $matcher
      */
     public function registerModule(string $name, callable $matcher)
     {
