@@ -18,7 +18,6 @@ use Whoops\Run as WhoopsRun;
 
 /**
  * @property Config $config
- * @property ModuleManager $moduleManager
  */
 class Application extends ApplicationSegment
 {
@@ -33,11 +32,16 @@ class Application extends ApplicationSegment
      */
     protected $dev;
 
+    /**
+     * @var ModuleManager
+     */
+    protected $moduleManager;
+
     public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
     {
         $di = new DirectoryDi($directory . '/services', [$this]);
         parent::__construct($directory, $di);
-        $this->dev = (bool)($options['dev'] ?? true);
+        $this->dev = (bool)($options['dev'] ?? false);
         $this->classLoader = $classLoader;
 
         if ($this->isDev()) {
@@ -64,9 +68,18 @@ class Application extends ApplicationSegment
         return $this->classLoader;
     }
 
+    public function getModuleManager(): ModuleManager
+    {
+        if (!$this->moduleManager) {
+            $this->moduleManager = new ModuleManager($this->resolvePath('modules'), $this);
+        }
+
+        return $this->moduleManager;
+    }
+
     public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface
     {
-        $module = $this->moduleManager
+        $module = $this->getModuleManager()
             ->getModuleForRequest($request);
 
         return $module->dispatchRequest($request);

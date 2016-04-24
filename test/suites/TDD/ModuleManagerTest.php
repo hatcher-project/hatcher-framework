@@ -25,7 +25,7 @@ class ModuleManagerTest extends HatcherTestCase
     public function setUp()
     {
         $this->application = $this->generateApplication();
-        $this->moduleManager = $this->application->moduleManager;
+        $this->moduleManager = $this->application->getModuleManager();
     }
 
     public function testGetModule()
