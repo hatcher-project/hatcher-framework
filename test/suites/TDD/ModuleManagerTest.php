@@ -30,7 +30,7 @@ class ModuleManagerTest extends HatcherTestCase
 
     public function testGetModule()
     {
-        $module = $this->moduleManager->getModule("frontend");
-        $this->assertEquals("frontend", $module->getName());
+        $module = $this->moduleManager->getModule('frontend');
+        $this->assertEquals('frontend', $module->getName());
     }
 }

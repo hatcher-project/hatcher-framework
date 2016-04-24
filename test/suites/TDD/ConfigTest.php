@@ -19,14 +19,14 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
             'foo' => 'bar',
             'bar' => 'baz',
             'baz' => [
-                "foo" => "foobar"
+                'foo' => 'foobar'
             ]
         ]);
 
-        $this->assertEquals("bar", $config->get("foo"));
-        $this->assertEquals("baz", $config->get("bar"));
-        $this->assertEquals("foobar", $config->get("baz.foo"));
-        $this->assertEquals(["foo" => "foobar"], $config->get("baz"));
+        $this->assertEquals('bar', $config->get('foo'));
+        $this->assertEquals('baz', $config->get('bar'));
+        $this->assertEquals('foobar', $config->get('baz.foo'));
+        $this->assertEquals(['foo' => 'foobar'], $config->get('baz'));
 
     }
 }

@@ -30,8 +30,8 @@ class Module extends ApplicationSegment
 
     public function __construct(string $moduleName, string $directory, Application $application)
     {
-        $di = new DirectoryDi($directory . "/services");
-        $this->adapter = include $directory . "/module.php";
+        $di = new DirectoryDi($directory . '/services');
+        $this->adapter = include $directory . '/module.php';
         //$options = $this->adapter->getOptions();
 
 

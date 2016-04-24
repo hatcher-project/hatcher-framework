@@ -34,7 +34,7 @@ class ConfigFactory
 
         $config = null;
         switch ($this->format) {
-            case "php":
+            case 'php':
                 $config = include $this->file;
                 break;
         }

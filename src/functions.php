@@ -16,7 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 function moduleMatchesHost(string ...$hosts): callable
 {
     return function (ServerRequestInterface $request) use ($hosts) {
-        $reqHost = $addr = $request->getServerParams()["REMOTE_ADDR"];
+        $reqHost = $addr = $request->getServerParams()['REMOTE_ADDR'];
         return in_array($reqHost, $hosts);
     };
 }

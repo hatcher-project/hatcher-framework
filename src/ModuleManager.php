@@ -39,7 +39,7 @@ class ModuleManager
      */
     public function registerModule(string $name, callable $matcher)
     {
-        $this->moduleNames[$name]= ["matcher" => $matcher] ;
+        $this->moduleNames[$name]= ['matcher' => $matcher] ;
     }
 
 
@@ -85,7 +85,7 @@ class ModuleManager
     public function getModuleForRequest(ServerRequestInterface $request): Module
     {
         foreach ($this->moduleNames as $moduleName => $modulDef) {
-            if ($modulDef["matcher"]($request)) {
+            if ($modulDef['matcher']($request)) {
                 return $this->getModule($moduleName);
             }
         }

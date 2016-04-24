@@ -18,19 +18,19 @@ describe('The application routes a request', function () {
 
     $generatePSR7Request = function (
         $url,
-        $method = "GET",
-        $remoteAddress = "127.0.0.1",
+        $method = 'GET',
+        $remoteAddress = '127.0.0.1',
         array $queryData = [],
         array $data = null
     ) {
 
-        $serverParams = ["REMOTE_ADDR" => $remoteAddress];
+        $serverParams = ['REMOTE_ADDR' => $remoteAddress];
         $fileParams = [];
-        $body = new Stream("php://memory", "r+");
+        $body = new Stream('php://memory', 'r+');
         $headers = [];
 
         if (count($queryData) > 0) {
-            $url .= "?" . http_build_query($queryData);
+            $url .= '?' . http_build_query($queryData);
         }
         $request = new ServerRequest(
             $serverParams,
@@ -52,20 +52,20 @@ describe('The application routes a request', function () {
     };
 
     /* @var $application \Hatcher\Application */
-    $application = include $GLOBALS["applicationSample"] . "/application.php";
+    $application = include $GLOBALS['applicationSample'] . '/application.php';
 
     it('should return pong when calling /ping', function () use ($application, $generatePSR7Request) {
-        $request = $generatePSR7Request("/ping", "GET");
+        $request = $generatePSR7Request('/ping', 'GET');
         $response = $application->routeHttpRequest($request);
-        expect((string)$response->getBody())->toBe("pong");
+        expect((string)$response->getBody())->toBe('pong');
     });
 
     it('should return "hello world" when calling /hello', function () use ($application, $generatePSR7Request) {
 
-        $request = $generatePSR7Request("/hello", "GET");
+        $request = $generatePSR7Request('/hello', 'GET');
         $response = $application->routeHttpRequest($request);
 
-        expect((string)$response->getBody())->toBe("hello world");
+        expect((string)$response->getBody())->toBe('hello world');
 
     });
 

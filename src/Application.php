@@ -36,9 +36,9 @@ class Application extends ApplicationSegment
 
     public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
     {
-        $di = new DirectoryDi($directory . "/services", [$this]);
+        $di = new DirectoryDi($directory . '/services', [$this]);
         parent::__construct($directory, $di);
-        $this->dev = (bool)($options["dev"] ?? true);
+        $this->dev = (bool)($options['dev'] ?? true);
         $this->classLoader = $classLoader;
 
         $this->registerErrorHandler();

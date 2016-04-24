@@ -53,7 +53,7 @@ class ApplicationSegment
     public function resolvePath($path = null)
     {
         if ($path) {
-            return $this->directory . "/" . $path;
+            return $this->directory . '/' . $path;
         } else {
             return $this->directory;
         }

@@ -16,9 +16,9 @@ class HatcherTestCase extends \PHPUnit_Framework_TestCase
             $GLOBALS['applicationSample'],
             $GLOBALS['composer'],
             [
-                "dev" => true,
-                "configFile" => "config.php",
-                "configFormat" => "php"
+                'dev' => true,
+                'configFile' => 'config.php',
+                'configFormat' => 'php'
             ]
         );
 
