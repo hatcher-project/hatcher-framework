@@ -9,11 +9,10 @@ use Composer\Autoload\ClassLoader;
 use Hatcher\Application;
 use Hatcher\Config;
 use Hatcher\DI;
-use Hatcher\Module;
-use Hatcher\ModuleAdapter;
+use Hatcher\DefaultApplication\Module;
 
 /**
- * @covers Hatcher\Module
+ * @covers Hatcher\DefaultApplication\Module
  */
 class ModuleTest extends \PHPUnit_Framework_TestCase
 {

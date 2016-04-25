@@ -6,8 +6,10 @@
 namespace Hatcher;
 
 use Hatcher\Application;
+use Hatcher\DefaultApplication\Module;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Hatcher\DefaultApplication\Module as DefaultModule;
 
 /**
  * Bundles of modules that allows create modules and to route a request to the good module
@@ -37,9 +39,9 @@ class ModuleManager
      * @param string $name
      * @param callable $matcher
      */
-    public function registerModule(string $name, callable $matcher)
+    public function registerModule(string $name, callable $matcher, $loader = 'auto')
     {
-        $this->moduleNames[$name]= ['matcher' => $matcher] ;
+        $this->moduleNames[$name]= ['matcher' => $matcher, 'loader' => $loader] ;
     }
 
 
@@ -56,10 +58,34 @@ class ModuleManager
                 throw new Exception(sprintf('No module was registered with the name "%s"', $name));
             }
 
+            $loader = $this->moduleNames[$name]['loader'];
             $path = $this->directory . '/' . $name;
-            $this->modules[$name] = new Module($name, $path, $this->application);
+
+            if ('auto' == $loader) {
+                if (file_exists($path . '/module.php')) {
+                    $this->modules[$name] = $this->loadModuleFile($path);
+                } else {
+                    $this->modules[$name] = $this->createDefaultModuleByName($name, $path);
+                }
+            } elseif ($this->moduleNames[$name]['loader'] == 'default') {
+                $this->modules[$name] = $this->createDefaultModuleByName($name, $path);
+            } else {
+                throw new Exception(
+                    'Unknown loading method' . $this->moduleNames[$name]['loader'] . ' in module ' . $name
+                );
+            }
         }
         return $this->modules[$name];
+    }
+
+    private function loadModuleFile($file)
+    {
+        return require $file;
+    }
+
+    private function createDefaultModuleByName($name, $path)
+    {
+        return new DefaultModule($name, $path, $this->application);
     }
 
     public function hasModule($name)

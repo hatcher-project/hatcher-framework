@@ -6,11 +6,15 @@
 namespace Hatcher;
 
 use Hatcher\Application;
+use Hatcher\ApplicationSegment;
 use Hatcher\Config\ConfigFactory;
+use Hatcher\DefaultApplication\DefaultDI;
+use Hatcher\DirectoryDi;
+use Hatcher\Exception\NoRouteMatchException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Module extends ApplicationSegment
+abstract class Module extends ApplicationSegment
 {
 
     /**
@@ -23,17 +27,13 @@ class Module extends ApplicationSegment
      */
     protected $name;
 
-    /**
-     * @var ModuleAdapter
-     */
-    protected $adapter;
 
-    public function __construct(string $moduleName, string $directory, Application $application)
+    public function __construct(string $moduleName, string $directory, Application $application, DI $di = null)
     {
-        $di = new DirectoryDi($directory . '/services');
-        $this->adapter = include $directory . '/module.php';
-        //$options = $this->adapter->getOptions();
 
+        if (null == $di) {
+            $di = new DefaultDI($directory . '/services', [$this]);
+        }
 
         parent::__construct($directory, $di);
         $this->application = $application;
@@ -56,8 +56,5 @@ class Module extends ApplicationSegment
         return $this->name;
     }
 
-    public function dispatchRequest(ServerRequestInterface $request)
-    {
-        return $this->adapter->dispatchRequest($this, $request);
-    }
+    abstract public function dispatchRequest(ServerRequestInterface $request): ResponseInterface;
 }
