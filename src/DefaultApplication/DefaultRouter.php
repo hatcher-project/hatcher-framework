@@ -8,11 +8,12 @@ namespace Hatcher\DefaultApplication;
 use Aura\Router\Route;
 use Aura\Router\RouterContainer;
 use Hatcher\Exception\NoRouteMatchException;
+use Hatcher\RouterInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
-class DefaultRouter
+class DefaultRouter implements RouterInterface
 {
 
     /**
@@ -23,13 +24,6 @@ class DefaultRouter
     public function __construct()
     {
         $this->routerContainer = new RouterContainer();
-            $this->routerContainer->getMap()->get('ping', '/ping', function (ServerRequestInterface $request) {
-                return new HtmlResponse('pong');
-            });
-
-            $this->routerContainer->getMap()->get('hello', '/hello', function (ServerRequestInterface $request) {
-                return new HtmlResponse('hello world');
-            });
     }
 
     /**
@@ -43,5 +37,17 @@ class DefaultRouter
             throw new NoRouteMatchException('No route matched the request');
         }
         return $match;
+    }
+
+    public function add($name, $path, $data): Route
+    {
+        return $this->routerContainer->getMap()->route(
+            $name,
+            $path,
+            function (ServerRequestInterface $request) use ($data): ResponseInterface
+            {
+                return call_user_func($data);
+            }
+        );
     }
 }

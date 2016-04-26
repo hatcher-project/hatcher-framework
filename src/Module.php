@@ -28,13 +28,8 @@ abstract class Module extends ApplicationSegment
     protected $name;
 
 
-    public function __construct(string $moduleName, string $directory, Application $application, DI $di = null)
+    public function __construct(string $moduleName, string $directory, Application $application, DI $di)
     {
-
-        if (null == $di) {
-            $di = new DefaultDI($directory . '/services', [$this]);
-        }
-
         parent::__construct($directory, $di);
         $this->application = $application;
         $this->name = $moduleName;
