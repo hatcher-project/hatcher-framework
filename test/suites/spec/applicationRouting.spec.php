@@ -91,6 +91,9 @@ describe('The application routes a request', function () {
 
         expect($response->getStatusCode())->toBe(404);
         expect((string)$response->getBody())->toBe('custom not found');
+
+        $request = $generatePSR7Request('/request/123', 'GET');
+        $response = $application->routeHttpRequest($request);
     });
 
 

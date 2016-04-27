@@ -5,14 +5,8 @@
 
 namespace Hatcher;
 
-use Pimple\Container;
-
 class DI
 {
-
-    /**
-     * @var Container
-     */
     protected $callables = [];
     protected $processed = [];
 

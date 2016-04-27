@@ -21,9 +21,18 @@ class Action
     /**
      * @var AbstractModule
      */
-    private $module;
-    private $request;
-    private $route;
+    protected $module;
+
+    /**
+     * @var ServerRequestInterface
+     */
+    protected $request;
+
+    /**
+     * @var Route
+     */
+    protected $route;
+
     private $initDone = false;
 
     final public function init(ServerRequestInterface $request, Route $route, AbstractModule $module)

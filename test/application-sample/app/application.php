@@ -7,5 +7,5 @@ namespace Hatcher;
 
 return function (Application $application) {
     $moduleManager = $application->getModuleManager();
-    $moduleManager->registerModule('frontend', $application->config->get('modules.front.matcher'));
+    $moduleManager->registerModule('frontend', moduleMatchesHost('front.hatcher.test', '127.0.0.1'));
 };

@@ -31,11 +31,9 @@
   "require": {
     "php": ">=7",
 
-    "pimple/pimple": "~3.0.0",
-    "hassankhan/config": "~0.8.2",
     "psr/http-message" : "1.0",
     "filp/whoops": "2.0.x-dev",
-    "aura/router"      : "~3.0.0",
+    "aura/router": "~3.0.0",
     "zendframework/zend-diactoros": "~1.2.0"
   },
 
@@ -43,7 +41,8 @@
     "phpunit/phpunit": "~4.8.19",
     "squizlabs/php_codesniffer": "~2",
     "sebastian/phpcpd": "~2.0.2",
-    "danielstjules/pho": "1.1.3"
+    "danielstjules/pho": "1.1.3",
+    "hassankhan/config": "~0.8.2"
   },
 
   "scripts": {
