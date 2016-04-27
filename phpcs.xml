@@ -33,6 +33,14 @@
         </properties>
     </rule>
 
+    <!-- Allow longer lines -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="200"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
 
     <!-- Following rules are to be removed after phpcs 2.6.1 is released -->
     <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
