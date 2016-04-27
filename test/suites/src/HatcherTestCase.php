@@ -12,7 +12,7 @@ class HatcherTestCase extends \PHPUnit_Framework_TestCase
 
     protected function generateApplication()
     {
-        $application = require $GLOBALS['applicationSample'] . '/application.php';
+        $application = require $GLOBALS['applicationSample'] . '/../bootstrap.php';
         return $application;
     }
 }

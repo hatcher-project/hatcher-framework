@@ -15,6 +15,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run as WhoopsRun;
+use Zend\Diactoros\Response\SapiEmitter;
+use Zend\Diactoros\ServerRequestFactory;
 
 /**
  * @property Config $config
@@ -37,16 +39,20 @@ class Application extends ApplicationSegment
      */
     protected $moduleManager;
 
+
     public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
     {
         $di = new DirectoryDi($directory . '/services', [$this]);
         parent::__construct($directory, $di);
+
         $this->dev = (bool)($options['dev'] ?? false);
         $this->classLoader = $classLoader;
 
         if ($this->isDev()) {
             $this->registerErrorHandler();
         }
+
+        call_user_func(require $this->resolvePath('application.php'), $this);
     }
 
 

@@ -52,7 +52,7 @@ describe('The application routes a request', function () {
     };
 
     /* @var $application \Hatcher\Application */
-    $application = include $GLOBALS['applicationSample'] . '/application.php';
+    $application = include $GLOBALS['applicationSample'] . '/../bootstrap.php';
 
     it('should return pong when calling /ping', function () use ($application, $generatePSR7Request) {
         $request = $generatePSR7Request('/ping', 'GET');
