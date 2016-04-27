@@ -8,7 +8,6 @@ namespace Hatcher\DefaultApplication;
 use Aura\Router\Route;
 use Hatcher\Application;
 use Hatcher\ApplicationSegment;
-use Hatcher\Config\ConfigFactory;
 use Hatcher\DI;
 use Hatcher\DirectoryDi;
 use Hatcher\Exception\NotFound;

@@ -7,7 +7,6 @@ namespace Hatcher;
 
 use Hatcher\Application;
 use Hatcher\ApplicationSegment;
-use Hatcher\Config\ConfigFactory;
 use Hatcher\DefaultApplication\DefaultDI;
 use Hatcher\DirectoryDi;
 use Psr\Http\Message\ResponseInterface;
