@@ -57,7 +57,7 @@ class Action
 
     public function __get($name)
     {
-        $this->module->getDI()->get($name);
+        return $this->module->getDI()->get($name);
     }
 
     public function notFound()
