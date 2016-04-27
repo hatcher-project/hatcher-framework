@@ -19,22 +19,22 @@ class Action
 {
 
     /**
-     * @var DI
+     * @var AbstractModule
      */
-    private $di;
+    private $module;
     private $request;
     private $route;
     private $initDone = false;
 
-    final public function init(ServerRequestInterface $request, Route $route)
+    final public function init(ServerRequestInterface $request, Route $route, AbstractModule $module)
     {
-
         if (true == $this->initDone) {
             throw new Exception('Action was already initialized. Action should only be initialized once.');
         }
 
         $this->request = $request;
         $this->route = $route;
+        $this->module = $module;
         $this->initDone = true;
     }
 
@@ -46,14 +46,9 @@ class Action
         return '';
     }
 
-    public function getDi()
-    {
-        return $this->di;
-    }
-
     public function __get($name)
     {
-        return $this->di->get($name);
+        $this->module->getDI()->get($name);
     }
 
     public function notFound()

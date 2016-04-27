@@ -89,7 +89,7 @@ class RouteHandler implements RouteHandlerInterface
             throw new Exception('action ' . $data['name'] . ' is not an instance of Hatcher\Action');
         }
 
-        $action->init($request, $route);
+        $action->init($request, $route, $this->module);
         return $action->execute();
     }
 }
