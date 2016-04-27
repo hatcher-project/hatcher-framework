@@ -25,7 +25,7 @@ class Module extends \Hatcher\AbstractModule
 
     public function __construct($moduleName, $directory, \Hatcher\Application $application)
     {
-        $di = new DirectoryDi($this->resolvePath('services'), [$this]);
+        $di = new DirectoryDi($directory . '/services', [$this]);
 
         $di->set('router', function (BaseModule $module) {
             $router = new Router();
