@@ -1,4 +1,0 @@
-<?php
-/**
- * @license see LICENSE
- */

@@ -22,7 +22,7 @@ class ModuleRouter
 
     /**
      * @param ServerRequestInterface $request
-     * @return Module|null
+     * @return AbstractModule|null
      */
     public function dispatchRequest(ServerRequestInterface $request)
     {

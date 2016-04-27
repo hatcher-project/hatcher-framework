@@ -10,11 +10,10 @@ use Hatcher\ApplicationSegment;
 use Hatcher\Config\ConfigFactory;
 use Hatcher\DefaultApplication\DefaultDI;
 use Hatcher\DirectoryDi;
-use Hatcher\Exception\NoRouteMatchException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract class Module extends ApplicationSegment
+abstract class AbstractModule extends ApplicationSegment
 {
 
     /**

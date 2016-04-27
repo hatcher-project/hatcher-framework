@@ -25,16 +25,18 @@
     <rule ref="Squiz.Strings.DoubleQuoteUsage">
         <exclude name="Squiz.Strings.DoubleQuoteUsage.ContainsVar"/>
     </rule>
-    <!-- By default we use single quote only. Double quotes come when a variable is inside -->
-    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
-        <exclude-pattern>./test/application-sample/*</exclude-pattern>
-    </rule>
 
     <!-- Disallow some function like var_dump -->
     <rule ref="Squiz.PHP.ForbiddenFunctions">
         <properties>
             <property name="forbiddenFunctions" type="array" value="var_dump=>null,sizeof=>count,delete=>unset,echo=>null"/>
         </properties>
+    </rule>
+
+
+    <!-- Following rules are to be removed after phpcs 2.6.1 is released -->
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <exclude-pattern>./test/application-sample/*</exclude-pattern>
     </rule>
 
 

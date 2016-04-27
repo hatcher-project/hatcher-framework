@@ -69,4 +69,29 @@ describe('The application routes a request', function () {
 
     });
 
+    it('should return "home!" when calling /', function () use ($application, $generatePSR7Request) {
+        $request = $generatePSR7Request('/', 'GET');
+        $response = $application->routeHttpRequest($request);
+
+        expect((string)$response->getBody())->toBe('home!');
+    });
+
+    it('should return error 500 when action is not defined correctly', function () use ($application, $generatePSR7Request) {
+        $request = $generatePSR7Request('/errored', 'GET');
+        $response = $application->routeHttpRequest($request);
+
+        expect($response->getStatusCode())->toBe(500);
+        expect((string)$response->getBody())->toBe('error page');
+    });
+
+
+    it('should return error 404 when route does not exist', function () use ($application, $generatePSR7Request) {
+        $request = $generatePSR7Request('/thisRouteDoesNotExist', 'GET');
+        $response = $application->routeHttpRequest($request);
+
+        expect($response->getStatusCode())->toBe(404);
+        expect((string)$response->getBody())->toBe('custom not found');
+    });
+
+
 });

@@ -8,16 +8,20 @@ use Zend\Diactoros\Response\HtmlResponse;
 
 return function (RouterInterface $router) {
 
-    $router->add('home', '/', function () {
-        return new HtmlResponse('Home');
-    });
+    $router->add('home', '/', [
+        'action' => 'index'
+    ]);
 
-    $router->add('ping', '/ping', function () {
-        return new HtmlResponse('pong');
-    });
+    $router->add('ping', '/ping');
 
-    $router->add('hello', '/hello', function () {
-        return new HtmlResponse('hello world');
-    });
+    $router->add('hello-world', '/hello', 'hello');
+
+    /**
+     * this route wont match and will return a 500 http code
+     */
+    $router->add('errored', '/errored');
+
+    $router->error('error');
+    $router->notFound('not-found');
 
 };

@@ -7,7 +7,6 @@
 
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response\SapiEmitter;
-use \Hatcher\Exception\NoRouteMatchException;
 
 $composer = include __DIR__ . '/../../../vendor/autoload.php';
 
@@ -19,14 +18,5 @@ $application = include __DIR__ . '/../app/application.php';
 
 $request = ServerRequestFactory::fromGlobals();
 
-try {
-    $response = $application->routeHttpRequest($request);
-} catch (NoRouteMatchException $e) {
-    if ($application->isDev()) {
-        throw $e;
-    } else {
-        // SHOW 404
-    }
-}
-
+$response = $application->routeHttpRequest($request);
 (new SapiEmitter())->emit($response);
