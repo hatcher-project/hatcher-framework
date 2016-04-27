@@ -62,8 +62,9 @@ class ModuleManager
             $path = $this->directory . '/' . $name;
 
             if ('auto' == $loader) {
-                if (file_exists($path . '/module.php')) {
-                    $this->modules[$name] = $this->loadModuleFile($path);
+                $moduleFile = $path . '/module.php';
+                if (file_exists($moduleFile)) {
+                    $this->modules[$name] = $this->loadModuleFile($moduleFile);
                 } else {
                     $this->modules[$name] = $this->createDefaultModuleByName($name, $path);
                 }
