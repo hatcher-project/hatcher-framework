@@ -12,6 +12,7 @@ use Hatcher\DI;
 use Hatcher\DirectoryDi;
 use Hatcher\Exception\NotFound;
 use Hatcher\RouteHandlerInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hatcher\AbstractModule as BaseModule;
@@ -46,6 +47,31 @@ class Module extends \Hatcher\AbstractModule
         return $this->routeHandler;
     }
 
+    private function extractRequestVirtualPath(ServerRequestInterface $request)
+    {
+        $params = $request->getServerParams();
+        $requestScriptName = isset($params['SCRIPT_NAME']) ? $params['SCRIPT_NAME'] : null;
+        $requestUri = $request->getUri()->getPath();
+        if($requestScriptName){
+            $virtualPath = $requestUri;
+            $basePath = null;
+            $requestScriptDir = dirname($requestScriptName);
+            if (stripos($requestUri, $requestScriptName) === 0) {
+                $basePath = $requestScriptName;
+            } elseif ($requestScriptDir !== '/' && stripos($requestUri, $requestScriptDir) === 0) {
+                $basePath = $requestScriptDir;
+            }
+
+            if ($basePath) {
+                $virtualPath = ltrim(substr($requestUri, strlen($basePath)), '/');
+            }
+
+            return $virtualPath;
+        }else{
+            return $requestUri;
+        }
+    }
+
     public function dispatchRequest(ServerRequestInterface $request): ResponseInterface
     {
         $router = null;
@@ -54,7 +80,15 @@ class Module extends \Hatcher\AbstractModule
             $router = $this->getDI()->get('router');
 
             try {
-                $match = $router->match($request);
+                $virtualPath = $this->extractRequestVirtualPath($request);
+
+                if($virtualPath !== $request->getUri()->getPath()){
+                    $uri = $request->getUri()->withPath($virtualPath);
+                    $match = $router->match($request->withUri($uri));
+                } else {
+                    $match = $router->match($request);
+                }
+
                 return $this->getRouteHandler()->handle($match, $request);
             } catch (NotFound $e) {
                 if ($router && $notFoundHandler = $router->getNotFoundHandler()) {
