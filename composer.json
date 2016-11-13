@@ -33,9 +33,9 @@
 
     "psr/http-message" : "1.0",
     "filp/whoops": "2.0.x-dev",
-    "aura/router": "~3.0.0",
-    "zendframework/zend-diactoros": "~1.2.0",
-    "twig/twig": ">=1.13"
+    "aura/router": "^3.0.0",
+    "zendframework/zend-diactoros": "^1.2.0",
+    "twig/twig": "^1.13"
   },
 
   "require-dev":{
