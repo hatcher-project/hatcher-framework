@@ -52,7 +52,19 @@ class Application extends ApplicationSegment
             $this->registerErrorHandler();
         }
 
-        call_user_func(require $this->resolvePath('application.php'), $this);
+        $applicationInit = require $this->resolvePath('application.php');
+
+        if (is_array($applicationInit)) {
+            if (isset($applicationInit['modules']) && is_array($applicationInit['modules'])) {
+                foreach ($applicationInit['modules'] as $moduleName => $moduleMatcher) {
+                    $this->getModuleManager()->registerModule($moduleName, $moduleMatcher);
+                }
+            }
+        } elseif (is_callable($applicationInit)) {
+            call_user_func($applicationInit, $this);
+        } else {
+            throw new Exception('Application initialisation file is not valid');
+        }
     }
 
 

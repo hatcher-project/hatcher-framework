@@ -27,7 +27,6 @@ class ApplicationSegmentTest extends \PHPUnit_Framework_TestCase
         $di = new DI();
         $di->set('foo', function () {
             return 'bar';
-
         });
 
         $this->application = new ApplicationSegment(

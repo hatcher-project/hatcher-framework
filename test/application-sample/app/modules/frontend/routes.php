@@ -23,5 +23,4 @@ return function (RouterInterface $router) {
 
     $router->error('error');
     $router->notFound('not-found');
-
 };

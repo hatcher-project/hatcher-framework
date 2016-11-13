@@ -66,7 +66,6 @@ describe('The application routes a request', function () {
         $response = $application->routeHttpRequest($request);
 
         expect((string)$response->getBody())->toBe('hello world');
-
     });
 
     it('should return "home!" when calling /', function () use ($application, $generatePSR7Request) {
@@ -95,6 +94,4 @@ describe('The application routes a request', function () {
         $request = $generatePSR7Request('/request/123', 'GET');
         $response = $application->routeHttpRequest($request);
     });
-
-
 });

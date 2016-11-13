@@ -27,6 +27,5 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('baz', $config->get('bar'));
         $this->assertEquals('foobar', $config->get('baz.foo'));
         $this->assertEquals(['foo' => 'foobar'], $config->get('baz'));
-
     }
 }
