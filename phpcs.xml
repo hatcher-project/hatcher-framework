@@ -4,6 +4,7 @@
     <file>./src/</file>
     <file>./test/suites</file>
     <file>./test/application-sample</file>
+    <exclude-pattern>cache/*</exclude-pattern>
 
     <!--The complete PSR-2 ruleset-->
     <rule ref="PSR2"/>

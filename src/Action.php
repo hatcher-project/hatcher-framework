@@ -5,7 +5,6 @@
 
 namespace Hatcher;
 
-use Aura\Router\Route;
 use Hatcher\Exception\NotFound;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Action handled by the default RouteHandler
  *
- * @property RouterInterface $router
  */
 class Action
 {
@@ -24,26 +22,32 @@ class Action
     protected $module;
 
     /**
+     * @var Application
+     */
+    protected $application;
+
+    /**
      * @var ServerRequestInterface
      */
     protected $request;
 
     /**
-     * @var Route
+     * @var array
      */
-    protected $route;
+    protected $data;
 
     private $initDone = false;
 
-    final public function init(ServerRequestInterface $request, Route $route, AbstractModule $module)
+    final public function init(ServerRequestInterface $request, array $route, AbstractModule $module)
     {
         if (true == $this->initDone) {
             throw new Exception('Action was already initialized. Action should only be initialized once.');
         }
 
         $this->request = $request;
-        $this->route = $route;
+        $this->data = $route;
         $this->module = $module;
+        $this->application = $module->getApplication();
         $this->initDone = true;
     }
 

@@ -34,30 +34,39 @@ class Application extends ApplicationSegment
      */
     protected $dev;
 
+    protected $cacheDirectory;
+
     /**
      * @var ModuleManager
      */
     protected $moduleManager;
 
 
-    public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
+    public function __construct(string $directory, ClassLoader $classLoader, bool $dev = false)
     {
-        $di = new DirectoryDi($directory . '/services', [$this]);
-        parent::__construct($directory, $di);
-
-        $this->dev = (bool)($options['dev'] ?? false);
+        $this->dev = $dev;
         $this->classLoader = $classLoader;
 
-        if ($this->isDev()) {
-            $this->registerErrorHandler();
-        }
+        $di = new DirectoryDi($directory . '/services', [$this]);
+        parent::__construct($directory, $di);
 
         $applicationInit = require $this->resolvePath('application.php');
 
         if (is_array($applicationInit)) {
             if (isset($applicationInit['modules']) && is_array($applicationInit['modules'])) {
-                foreach ($applicationInit['modules'] as $moduleName => $moduleMatcher) {
-                    $this->getModuleManager()->registerModule($moduleName, $moduleMatcher);
+                foreach ($applicationInit['modules'] as $moduleName => $moduleDef) {
+                    $this->getModuleManager()->registerModule($moduleName, $moduleDef['matcher']);
+                }
+            }
+
+            if (isset($applicationInit['cache-directory'])) {
+                if (is_string($applicationInit['cache-directory'])) {
+                    $this->cacheDirectory = $this->resolvePath($applicationInit['cache-directory']);
+                } else {
+                    throw new Exception(
+                        'Invalid cache-directory option. cache-directory must be a string in '
+                        . $this->resolvePath('application.php')
+                    );
                 }
             }
         } elseif (is_callable($applicationInit)) {
@@ -65,8 +74,19 @@ class Application extends ApplicationSegment
         } else {
             throw new Exception('Application initialisation file is not valid');
         }
+
+
+
+
+        if ($this->isDev()) {
+            $this->registerErrorHandler();
+        }
     }
 
+    public function getCacheDirectory()
+    {
+        return $this->cacheDirectory;
+    }
 
     /**
      * The application is running in dev environment

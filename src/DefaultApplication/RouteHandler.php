@@ -34,8 +34,18 @@ class RouteHandler implements RouteHandlerInterface
     }
 
 
-    public function handle(Route $route, ServerRequestInterface $request): ResponseInterface
+    public function handle(array $route, ServerRequestInterface $request): ResponseInterface
     {
+
+        if (!isset($route['_route'])) {
+            $route['&:unknown'];
+            if (!isset($route['_action'])) {
+                throw new Exception('Unable to dispatch the given route');
+            }
+        } elseif (!isset($route['_action'])) {
+            $route['_action'] = $route['_route'];
+        }
+
         $response = $this->dispatchAction($route, $request);
 
         if ($response instanceof ResponseInterface) {
@@ -59,26 +69,13 @@ class RouteHandler implements RouteHandlerInterface
         }
     }
 
-    private function dispatchAction(Route $route, ServerRequestInterface $request)
+    private function dispatchAction(array $route, ServerRequestInterface $request)
     {
-        $data = $route->handler;
-
-        if (null === $data) {
-            $data = [
-                'action' => $route->name
-            ];
-        } elseif (is_string($data)) {
-            $data = [
-                'action' => $data
-            ];
+        if (!isset($route['_action'])) {
+            throw new Exception('No action found in the route ' . $route['_route']);
         }
 
-        if (!isset($data['action'])) {
-            throw new Exception('No action found in the route ' . $route->name);
-        }
-
-
-        $actionFile = $this->module->resolvePath('actions/' . $data['action'] . '.php');
+        $actionFile = $this->module->resolvePath('actions/' . $route['_action'] . '.php');
         if (!file_exists($actionFile)) {
             throw new Exception('Action file does not exist: ' . $actionFile);
         }
@@ -86,7 +83,10 @@ class RouteHandler implements RouteHandlerInterface
         $action = require $actionFile;
 
         if (!($action instanceof Action)) {
-            throw new Exception('action ' . $data['name'] . ' is not an instance of Hatcher\Action');
+            throw new Exception(
+                'action ' . $route['_action'] . ' is not an instance of Hatcher\Action.' .
+                ' using the class: ' . get_class($action)
+            );
         }
 
         $action->init($request, $route, $this->module);

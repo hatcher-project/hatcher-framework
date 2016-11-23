@@ -39,9 +39,9 @@ class ModuleManager
      * @param string $name
      * @param callable $matcher
      */
-    public function registerModule(string $name, callable $matcher, $loader = 'auto')
+    public function registerModule(string $name, $matcher)
     {
-        $this->moduleNames[$name]= ['matcher' => $matcher, 'loader' => $loader] ;
+        $this->moduleNames[$name]= $matcher;
     }
 
 
@@ -58,31 +58,13 @@ class ModuleManager
                 throw new Exception(sprintf('No module was registered with the name "%s"', $name));
             }
 
-            $loader = $this->moduleNames[$name]['loader'];
             $path = $this->directory . '/' . $name;
 
-            if ('auto' == $loader) {
-                $moduleFile = $path . '/module.php';
-                if (file_exists($moduleFile)) {
-                    $this->modules[$name] = $this->loadModuleFile($moduleFile);
-                } else {
-                    $this->modules[$name] = $this->createDefaultModuleByName($name, $path);
-                }
-            } elseif ($this->moduleNames[$name]['loader'] == 'default') {
-                $this->modules[$name] = $this->createDefaultModuleByName($name, $path);
-            } else {
-                throw new Exception(
-                    'Unknown loading method' . $this->moduleNames[$name]['loader'] . ' in module ' . $name
-                );
-            }
+            $this->modules[$name] = $this->createDefaultModuleByName($name, $path);
         }
         return $this->modules[$name];
     }
 
-    private function loadModuleFile($file)
-    {
-        return require $file;
-    }
 
     private function createDefaultModuleByName($name, $path)
     {
@@ -112,7 +94,7 @@ class ModuleManager
     public function getModuleForRequest(ServerRequestInterface $request): Module
     {
         foreach ($this->moduleNames as $moduleName => $modulDef) {
-            if ($modulDef['matcher']($request)) {
+            if ($modulDef($request)) {
                 return $this->getModule($moduleName);
             }
         }

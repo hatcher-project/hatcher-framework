@@ -51,8 +51,10 @@ describe('The application routes a request', function () {
         return $request;
     };
 
+    putenv('DEV=false');
     /* @var $application \Hatcher\Application */
     $application = include $GLOBALS['applicationSample'] . '/../bootstrap.php';
+
 
     it('should return pong when calling /ping', function () use ($application, $generatePSR7Request) {
         $request = $generatePSR7Request('/ping', 'GET');
@@ -93,5 +95,12 @@ describe('The application routes a request', function () {
 
         $request = $generatePSR7Request('/request/123', 'GET');
         $response = $application->routeHttpRequest($request);
+    });
+
+    it('should read the configuration', function () use ($application, $generatePSR7Request) {
+        $request = $generatePSR7Request('/with-config', 'GET');
+        $response = $application->routeHttpRequest($request);
+
+        expect((string)$response->getBody())->toBe('a thing');
     });
 });

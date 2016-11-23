@@ -9,4 +9,9 @@ use Noodlehaus\AbstractConfig;
 
 class Config extends AbstractConfig
 {
+
+    public function getData()
+    {
+        return $this->data;
+    }
 }

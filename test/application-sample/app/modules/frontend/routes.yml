@@ -1,0 +1,23 @@
+home:
+    path: /
+    defaults:
+        _action: index
+
+
+hello-world:
+    path: /hello
+    defaults:
+        _action: hello
+
+
+ping:
+    path: /ping
+
+
+errored:
+    path: /errored
+
+
+with-config:
+    path: /with-config
+

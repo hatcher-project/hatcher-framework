@@ -7,8 +7,12 @@ namespace Hatcher;
 
 return [
 
+    'cache-directory' => 'cache',
+
     'modules' => [
-        'frontend' => moduleMatchesHost('front.hatcher.test', '127.0.0.1')
+        'frontend' => [
+            'matcher' => moduleMatchesHost('front.hatcher.test', '127.0.0.1', 'localhost')
+        ]
     ]
 
 ];

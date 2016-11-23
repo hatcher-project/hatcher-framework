@@ -6,6 +6,8 @@
 namespace Hatcher;
 
 use Hatcher\DI;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\FileLocatorInterface;
 
 /**
  * Represents a segment of the application
@@ -13,7 +15,7 @@ use Hatcher\DI;
  * It is located in the file system and offers a service locator
  *
  */
-class ApplicationSegment
+class ApplicationSegment extends FileLocator
 {
 
     /**
@@ -30,8 +32,9 @@ class ApplicationSegment
 
     public function __construct(string $directory, DI $di)
     {
-        $this->directory = $directory;
+        parent::__construct([$directory]);
         $this->di = $di;
+        $this->directory = $directory;
     }
 
     /**
@@ -49,7 +52,7 @@ class ApplicationSegment
      * @param string|null $path
      * @return string
      */
-    public function resolvePath($path = null)
+    public function resolvePath(string $path = null)
     {
         if ($path) {
             return $this->directory . '/' . $path;
@@ -62,7 +65,7 @@ class ApplicationSegment
     /**
      * Provide shortcut to get config object or services
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return  $this->getDI()->get($name);
     }

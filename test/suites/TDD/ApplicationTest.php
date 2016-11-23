@@ -29,7 +29,7 @@ class ApplicationTest extends HatcherTestCase
 
     public function testIsDev()
     {
-        $this->assertFalse($this->application->isDev());
+        $this->assertTrue($this->application->isDev());
     }
 
     public function testGetClassLoader()

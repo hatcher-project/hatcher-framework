@@ -5,17 +5,23 @@
 
 namespace Hatcher\DefaultApplication;
 
-use Aura\Router\Route;
 use Hatcher\Application;
 use Hatcher\ApplicationSegment;
 use Hatcher\DI;
 use Hatcher\DirectoryDi;
+use Hatcher\Exception;
 use Hatcher\Exception\NotFound;
 use Hatcher\RouteHandlerInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hatcher\AbstractModule as BaseModule;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Loader\YamlFileLoader;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\Router;
 use Zend\Diactoros\Response\EmptyResponse;
 use Zend\Diactoros\Response\HtmlResponse;
 
@@ -29,11 +35,48 @@ class Module extends \Hatcher\AbstractModule
         $di = new DirectoryDi($directory . '/services', [$this]);
 
         $di->set('router', function (BaseModule $module) {
-            $router = new Router();
-            call_user_func(require $module->resolvePath('routes.php'), $router);
-            return $router;
+            return $this->generateRouter();
         });
         parent::__construct($moduleName, $directory, $application, $di);
+    }
+
+    private function generateRouter()
+    {
+        if (file_exists($this->resolvePath('routes.yml'))) {
+            $loader = new YamlFileLoader($this);
+            $routesFile = 'routes.yml';
+        } else {
+            throw new Exception('No routing file found, please provide either a routes.yml or a routes.php file');
+        }
+
+        $router = new Router(
+            $loader,
+            $routesFile,
+            [
+                'cache_dir' => $this->resolvePath('cache/__router'),
+                'debug' => $this->application->isDev(),
+                'matcher_cache_class' => '__Hatcher_' . $this->name . 'UrlMatcher',
+                'generator_cache_class' => '__Hatcher_' . $this->name . 'UrlGenerator'
+            ]
+        );
+
+        return $router;
+    }
+
+    public function getNotFoundHandler()
+    {
+        return [
+            '_action' => 'not-found',
+            '_route'  => '&:notfound'
+        ];
+    }
+
+    public function getErrorHandler()
+    {
+        return [
+            '_action' => 'error',
+            '_route'  => '&:error'
+        ];
     }
 
     /**
@@ -52,7 +95,7 @@ class Module extends \Hatcher\AbstractModule
         $params = $request->getServerParams();
         $requestScriptName = isset($params['SCRIPT_NAME']) ? $params['SCRIPT_NAME'] : null;
         $requestUri = $request->getUri()->getPath();
-        if($requestScriptName){
+        if ($requestScriptName) {
             $virtualPath = $requestUri;
             $basePath = null;
             $requestScriptDir = dirname($requestScriptName);
@@ -67,34 +110,29 @@ class Module extends \Hatcher\AbstractModule
             }
 
             return $virtualPath;
-        }else{
+        } else {
             return $requestUri;
         }
     }
 
     public function dispatchRequest(ServerRequestInterface $request): ResponseInterface
     {
-        $router = null;
-        try {
-            /* @var $router Router */
-            $router = $this->getDI()->get('router');
 
+        /* @var $router Router */
+
+        try {
             try {
+                $router = $this->getDI()->get('router');
                 $virtualPath = $this->extractRequestVirtualPath($request);
 
-                if($virtualPath !== $request->getUri()->getPath()){
-                    $uri = $request->getUri()->withPath($virtualPath);
-                    $match = $router->match($request->withUri($uri));
-                } else {
-                    $match = $router->match($request);
-                }
+                /* @var $router Router */
+                $router = $this->getDI()->get('router');
+                $match = $router->match($virtualPath);
 
                 return $this->getRouteHandler()->handle($match, $request);
-            } catch (NotFound $e) {
-                if ($router && $notFoundHandler = $router->getNotFoundHandler()) {
-                    $notFoundRoute = new Route();
-                    $notFoundRoute->handler($notFoundHandler);
-                    return $this->getRouteHandler()->handle($notFoundRoute, $request);
+            } catch (ResourceNotFoundException $e) {
+                if ($router && $notFoundHandler = $this->getNotFoundHandler()) {
+                    return $this->getRouteHandler()->handle($notFoundHandler, $request);
                 }
                 return new HtmlResponse('Page not found!', 404);
             }
@@ -103,10 +141,8 @@ class Module extends \Hatcher\AbstractModule
                 // Whoops will display a nice error message
                 throw $e;
             } else {
-                if ($router && $errorHandler = $router->getErrorHandler()) {
-                    $errorRoute = new Route();
-                    $errorRoute->handler($errorHandler);
-                    return $this->getRouteHandler()->handle($errorRoute, $request);
+                if ($router && $errorHandler = $this->getErrorHandler()) {
+                    return $this->getRouteHandler()->handle($errorHandler, $request);
                 }
                 return new EmptyResponse(500);
             }

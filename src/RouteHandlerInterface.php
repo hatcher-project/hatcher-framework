@@ -17,5 +17,5 @@ interface RouteHandlerInterface
      * @param $data
      * @return ResponseInterface
      */
-    public function handle(Route $route, ServerRequestInterface $request): ResponseInterface;
+    public function handle(array $routeData, ServerRequestInterface $request): ResponseInterface;
 }
