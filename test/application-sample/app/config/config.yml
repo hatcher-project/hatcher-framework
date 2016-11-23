@@ -1,5 +1,13 @@
 something: a thing
 
+foo:
+    bar: this is bar
+    baz: this is baz
 
-imports:
-    - foo
+db:
+    _imports:
+        - db.yml
+
+_imports:
+    - importMerge.json
+    - importReplace.php

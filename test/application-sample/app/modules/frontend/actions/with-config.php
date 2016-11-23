@@ -12,9 +12,7 @@ return new class extends Action{
 
     public function execute()
     {
-
         $value = $this->application->config->get('something', 'not found');
-
         return new HtmlResponse($value);
     }
 

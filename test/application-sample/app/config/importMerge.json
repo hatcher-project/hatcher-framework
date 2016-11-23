@@ -1,0 +1,10 @@
+{
+  "foo" : {
+    "baz": "this is the new baz",
+    "qux": "this is qux"
+  },
+
+  "_imports": [
+    "importReplace.php"
+  ]
+}

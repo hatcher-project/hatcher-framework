@@ -6,6 +6,8 @@
 namespace Hatcher;
 
 use Hatcher\Application;
+use Hatcher\Config\ConfigProcessor;
+use Hatcher\Config\SimpleConfig;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Yaml\Yaml;
@@ -13,39 +15,23 @@ use Symfony\Component\Yaml\Yaml;
 return function (Application $application) {
 
     $cacheDir = $application->getCacheDirectory();
-    $configFile = $application->resolvePath('config/config.yml');
 
     if ($cacheDir) {
         $cachePath = $cacheDir . '/__app/config.cache.php';
         $cacheFile = new ConfigCache($cachePath, $application->isDev());
 
         if ($cacheFile->isFresh()) {
-            return new Config(unserialize(file_get_contents($cachePath)));
+            return new SimpleConfig(unserialize(file_get_contents($cachePath)));
         }
     }
 
-    try {
-        $configData = Yaml::parse(file_get_contents($configFile));
-    } catch (\Exception $e) {
-        // Config might contain sensitive informations
-        // Prevent YAML loader to give these data in production
-        if ($application->isDev()) {
-            throw $e;
-        } else {
-            throw new Exception(
-                'Unable to load configuration file. Enable dev mode to see what is wrong'
-            );
-        }
-    }
 
-    if (!is_array($configData)) {
-        throw new Exception('Config file should be parsed as an array. Using file: ' . $configFile);
-    }
-
-    $config = new Config($configData);
+    $configFile = getenv('CONFIG_FILE');
+    $configFile = $application->resolvePath($configFile ? $configFile : 'config/config.yml');
+    $config = new ConfigProcessor($configFile);
 
     if ($cacheDir) {
-        $cacheFile->write(serialize($config->getData()), [new FileResource($configFile)]);
+        $cacheFile->write(serialize($config->all()), [new FileResource($configFile)]);
     }
 
     return $config;
