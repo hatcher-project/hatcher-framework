@@ -9,6 +9,7 @@ use Hatcher\Config;
 
 /**
  * @covers Hatcher\Config\SimpleConfig
+ * @covers Hatcher\Config\ConfigProcessor
  */
 class ConfigTest extends \PHPUnit_Framework_TestCase
 {
