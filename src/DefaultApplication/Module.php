@@ -46,7 +46,7 @@ class Module extends \Hatcher\AbstractModule
             $loader = new YamlFileLoader($this);
             $routesFile = 'routes.yml';
         } else {
-            throw new Exception('No routing file found, please provide either a routes.yml or a routes.php file');
+            throw new Exception('No routing file found, please provide a routes.yml file');
         }
 
         $router = new Router(
