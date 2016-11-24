@@ -68,6 +68,8 @@ class Application extends ApplicationSegment
                         . $this->resolvePath('application.php')
                     );
                 }
+            } else {
+                $this->cacheDirectory = $this->resolvePath('cache/_app');
             }
         } elseif (is_callable($applicationInit)) {
             call_user_func($applicationInit, $this);
@@ -87,6 +89,8 @@ class Application extends ApplicationSegment
     {
         return $this->cacheDirectory;
     }
+
+
 
     /**
      * The application is running in dev environment

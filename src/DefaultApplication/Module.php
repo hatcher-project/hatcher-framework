@@ -16,7 +16,9 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Hatcher\AbstractModule as BaseModule;
+use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
@@ -40,6 +42,12 @@ class Module extends \Hatcher\AbstractModule
         parent::__construct($moduleName, $directory, $application, $di);
     }
 
+    public function getCachePath($path)
+    {
+        $cache = $this->application->getCacheDirectory();
+        return $cache . '/module/' . $this->getName() . '/' . $path;
+    }
+
     private function generateRouter()
     {
         if (file_exists($this->resolvePath('routes.yml'))) {
@@ -53,14 +61,19 @@ class Module extends \Hatcher\AbstractModule
             $loader,
             $routesFile,
             [
-                'cache_dir' => $this->resolvePath('cache/__router'),
+                'cache_dir' => $this->getCachePath('router'),
                 'debug' => $this->application->isDev(),
-                'matcher_cache_class' => '__Hatcher_' . $this->name . 'UrlMatcher',
+                'matcher_cache_class' => $this->getMatcherCacheClass(),
                 'generator_cache_class' => '__Hatcher_' . $this->name . 'UrlGenerator'
             ]
         );
 
         return $router;
+    }
+
+    private function getMatcherCacheClass()
+    {
+        return '__Hatcher_' . $this->getName() . 'UrlMatcher';
     }
 
     public function getNotFoundHandler()
@@ -122,26 +135,48 @@ class Module extends \Hatcher\AbstractModule
 
         try {
             try {
-                $router = $this->getDI()->get('router');
                 $virtualPath = $this->extractRequestVirtualPath($request);
 
-                /* @var $router Router */
-                $router = $this->getDI()->get('router');
-                $match = $router->match($virtualPath);
+                if ($virtualPath{0} !== '/') {
+                    $virtualPath = '/' . $virtualPath;
+                }
+
+                $safePath = base64_encode($virtualPath);
+                $cacheFile = $this->getCachePath(
+                    'router/routes/' . substr($safePath, 0, 2)  . '/' . $safePath{2}  . '/' . $safePath . '.route.match'
+                );
+
+                $cache = new ConfigCache($cacheFile, $this->application->isDev());
+
+                if ($cache->isFresh()) {
+                    $match = unserialize(file_get_contents($cacheFile));
+                } else {
+                    /* @var $router Router */
+                    $router = $this->getDI()->get('router');
+                    $match = $router->match($virtualPath);
+
+                    $routeCache = $this->getCachePath('router/' . $this->getMatcherCacheClass() . '.php');
+
+                    $cache->write(serialize($match), [new FileResource($routeCache)]);
+                }
 
                 return $this->getRouteHandler()->handle($match, $request);
+
+            // HANDLE NOT FOUND
             } catch (ResourceNotFoundException $e) {
                 if ($router && $notFoundHandler = $this->getNotFoundHandler()) {
                     return $this->getRouteHandler()->handle($notFoundHandler, $request);
                 }
                 return new HtmlResponse('Page not found!', 404);
             }
+
+        // HANDLE ERRORS
         } catch (\Exception $e) {
             if ($this->application->isDev()) {
                 // Whoops will display a nice error message
                 throw $e;
             } else {
-                if ($router && $errorHandler = $this->getErrorHandler()) {
+                if ($errorHandler = $this->getErrorHandler()) {
                     return $this->getRouteHandler()->handle($errorHandler, $request);
                 }
                 return new EmptyResponse(500);

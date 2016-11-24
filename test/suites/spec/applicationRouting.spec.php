@@ -103,4 +103,11 @@ describe('The application routes a request', function () {
 
         expect((string)$response->getBody())->toBe('a thing');
     });
+
+    it('dynamic routing should detect data', function () use ($application, $generatePSR7Request) {
+        $request = $generatePSR7Request('/customer/foo', 'GET');
+        $response = $application->routeHttpRequest($request);
+
+        expect((string)$response->getBody())->toBe('Customer: foo');
+    });
 });

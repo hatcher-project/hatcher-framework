@@ -21,3 +21,5 @@ errored:
 with-config:
     path: /with-config
 
+customer:
+    path: /customer/{id}
