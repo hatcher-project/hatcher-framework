@@ -9,7 +9,7 @@ use Composer\Autoload\ClassLoader;
 use Hatcher\Application;
 use Hatcher\Config;
 use Hatcher\DI;
-use Hatcher\DefaultApplication\Module;
+use Hatcher\DefaultApplication\Module\Module;
 
 /**
  * @covers Hatcher\DefaultApplication\Module

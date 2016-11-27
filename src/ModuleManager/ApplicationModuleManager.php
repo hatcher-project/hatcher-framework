@@ -3,19 +3,17 @@
  * @license see LICENSE
  */
 
-namespace Hatcher;
+namespace Hatcher\ModuleManager;
 
 use Hatcher\Application;
-use Hatcher\DefaultApplication\Module;
-use Psr\Http\Message\ResponseInterface;
+use Hatcher\DefaultApplication\Module\Module;
+use Hatcher\Exception;
 use Psr\Http\Message\ServerRequestInterface;
-use Hatcher\DefaultApplication\Module as DefaultModule;
+use Hatcher\DefaultApplication\Module\Module as DefaultModule;
 
-/**
- * Bundles of modules that allows create modules and to route a request to the good module
- */
-class ModuleManager
+class ApplicationModuleManager implements ModuleManagerInterface
 {
+
     protected $directory;
     /**
      * @var Application
@@ -32,26 +30,12 @@ class ModuleManager
     {
         $this->directory = $baseDirectory;
         $this->application = $application;
-    }
 
-    /**
-     * Registers a module in the application
-     * @param string $name
-     * @param callable $matcher
-     */
-    public function registerModule(string $name, $matcher)
-    {
-        $this->moduleNames[$name]= $matcher;
+        $this->moduleNames = $application->getInitialisationValue('modules') ?? [];
     }
 
 
-    /**
-     * Get a module by its name
-     * @param string $name
-     * @return Module
-     * @throws Exception
-     */
-    public function getModule(string $name): Module
+    public function getModule(string $name) : Module
     {
         if (!isset($this->modules[$name])) {
             if (!isset($this->moduleNames[$name])) {
@@ -60,18 +44,12 @@ class ModuleManager
 
             $path = $this->directory . '/' . $name;
 
-            $this->modules[$name] = $this->createDefaultModuleByName($name, $path);
+            $this->modules[$name] = new DefaultModule($name, $path, $this->application);
         }
         return $this->modules[$name];
     }
 
-
-    private function createDefaultModuleByName($name, $path)
-    {
-        return new DefaultModule($name, $path, $this->application);
-    }
-
-    public function hasModule($name)
+    public function hasModule(string $name) : bool
     {
         return isset($this->moduleNames[$name]);
     }
@@ -94,7 +72,16 @@ class ModuleManager
     public function getModuleForRequest(ServerRequestInterface $request): Module
     {
         foreach ($this->moduleNames as $moduleName => $modulDef) {
-            if ($modulDef($request)) {
+            if (!isset($modulDef['matcher']['function'])) {
+                throw new Exception('Unable to find module matcher. Module matcher is not defined correctly');
+            }
+
+            $match = call_user_func_array(
+                $modulDef['matcher']['function'],
+                [$request] + $modulDef['matcher']['data']
+            );
+
+            if ($match) {
                 return $this->getModule($moduleName);
             }
         }

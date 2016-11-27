@@ -28,6 +28,9 @@ class DirectoryDi extends DI
     {
         if (!$this->registered($what)) {
             $file = $this->directory . "/$what.php";
+            if (!file_exists($file)) {
+                throw new Exception('Service "' . $what . '" does not exist in ' . $this->directory);
+            }
             $service = include $file;
             if (!is_callable($service)) {
                 throw new Exception(sprintf('Bad service type. The file%s should return a callable', $file));

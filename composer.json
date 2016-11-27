@@ -35,6 +35,7 @@
     "filp/whoops": "2.0.x-dev",
     "symfony/routing": "^3.0.0",
     "symfony/config": "^3.0.0",
+    "tedivm/stash": "^0.14.1",
     "zendframework/zend-diactoros": "^1.2.0",
     "twig/twig": "^1.13",
     "vlucas/phpdotenv": "^2.4",

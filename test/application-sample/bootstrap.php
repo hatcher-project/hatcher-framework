@@ -13,8 +13,9 @@ $GLOBALS['composer'] = $composer;
 $env = new Dotenv(__DIR__);
 $env->load();
 
-$dev = getenv('DEV');
-$dev = $dev === true || $dev === 'true';
+$options = [
+    'dev' => getenv('DEV') === 'true',
+    'env' => getenv('ENV') ?? 'production'
+];
 
-
-return new Application(__DIR__ . '/app', $composer, $dev);
+return new Application(__DIR__ . '/app', $composer, $options);

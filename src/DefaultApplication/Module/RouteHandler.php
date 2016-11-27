@@ -3,7 +3,7 @@
  * @license see LICENSE
  */
 
-namespace Hatcher\DefaultApplication;
+namespace Hatcher\DefaultApplication\Module;
 
 use Aura\Router\Route;
 use Hatcher\Action;

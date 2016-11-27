@@ -3,10 +3,11 @@
  * @license see LICENSE
  */
 
-namespace Hatcher\DefaultApplication;
+namespace Hatcher\DefaultApplication\Module;
 
 use Hatcher\Application;
 use Hatcher\ApplicationSegment;
+use Hatcher\DefaultApplication\Module\RouteHandler;
 use Hatcher\DI;
 use Hatcher\DirectoryDi;
 use Hatcher\Exception;
@@ -35,10 +36,6 @@ class Module extends \Hatcher\AbstractModule
     public function __construct($moduleName, $directory, \Hatcher\Application $application)
     {
         $di = new DirectoryDi($directory . '/services', [$this]);
-
-        $di->set('router', function (BaseModule $module) {
-            return $this->generateRouter();
-        });
         parent::__construct($moduleName, $directory, $application, $di);
     }
 
@@ -48,33 +45,7 @@ class Module extends \Hatcher\AbstractModule
         return $cache . '/module/' . $this->getName() . '/' . $path;
     }
 
-    private function generateRouter()
-    {
-        if (file_exists($this->resolvePath('routes.yml'))) {
-            $loader = new YamlFileLoader($this);
-            $routesFile = 'routes.yml';
-        } else {
-            throw new Exception('No routing file found, please provide a routes.yml file');
-        }
 
-        $router = new Router(
-            $loader,
-            $routesFile,
-            [
-                'cache_dir' => $this->getCachePath('router'),
-                'debug' => $this->application->isDev(),
-                'matcher_cache_class' => $this->getMatcherCacheClass(),
-                'generator_cache_class' => '__Hatcher_' . $this->name . 'UrlGenerator'
-            ]
-        );
-
-        return $router;
-    }
-
-    private function getMatcherCacheClass()
-    {
-        return '__Hatcher_' . $this->getName() . 'UrlMatcher';
-    }
 
     public function getNotFoundHandler()
     {
@@ -141,24 +112,9 @@ class Module extends \Hatcher\AbstractModule
                     $virtualPath = '/' . $virtualPath;
                 }
 
-                $safePath = base64_encode($virtualPath);
-                $cacheFile = $this->getCachePath(
-                    'router/routes/' . substr($safePath, 0, 2)  . '/' . $safePath{2}  . '/' . $safePath . '.route.match'
-                );
-
-                $cache = new ConfigCache($cacheFile, $this->application->isDev());
-
-                if ($cache->isFresh()) {
-                    $match = unserialize(file_get_contents($cacheFile));
-                } else {
-                    /* @var $router Router */
-                    $router = $this->getDI()->get('router');
-                    $match = $router->match($virtualPath);
-
-                    $routeCache = $this->getCachePath('router/' . $this->getMatcherCacheClass() . '.php');
-
-                    $cache->write(serialize($match), [new FileResource($routeCache)]);
-                }
+                /* @var $router Router */
+                $router = $this->getDI()->get('router');
+                $match = $router->match($virtualPath);
 
                 return $this->getRouteHandler()->handle($match, $request);
 
