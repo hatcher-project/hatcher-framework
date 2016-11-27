@@ -154,7 +154,7 @@ class Application extends ApplicationSegment
     {
         $run     = new WhoopsRun;
         $run->register();
-        if($this->isDev()){
+        if ($this->isDev()) {
             $run->pushHandler(new PrettyPageHandler);
         } else {
             $run->pushHandler(new HtmlSafeHandler($this));

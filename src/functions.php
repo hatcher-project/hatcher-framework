@@ -42,7 +42,8 @@ function requestMatchesHost(ServerRequestInterface $request, string ...$hosts)
  * @param ResponseInterface $response
  * @throws Exception
  */
-function sendResponse(ResponseInterface $response){
+function sendResponse(ResponseInterface $response)
+{
     if (headers_sent()) {
         throw new \Hatcher\Exception('Unable to emit response; headers already sent');
     }

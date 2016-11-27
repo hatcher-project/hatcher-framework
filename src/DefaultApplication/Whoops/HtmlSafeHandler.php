@@ -5,7 +5,6 @@
 
 namespace Hatcher\DefaultApplication\Whoops;
 
-
 use Hatcher\Application;
 use Whoops\Handler\Handler;
 
@@ -38,5 +37,4 @@ class HtmlSafeHandler extends Handler
 
         return Handler::QUIT;
     }
-
 }
