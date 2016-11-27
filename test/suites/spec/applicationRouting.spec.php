@@ -59,6 +59,8 @@ describe('The application routes a request', function () {
     it('should return pong when calling /ping', function () use ($application, $generatePSR7Request) {
         $request = $generatePSR7Request('/ping', 'GET');
         $response = $application->routeHttpRequest($request);
+
+        expect($response->getStatusCode())->toBe(200);
         expect((string)$response->getBody())->toBe('pong');
     });
 
@@ -67,6 +69,7 @@ describe('The application routes a request', function () {
         $request = $generatePSR7Request('/hello', 'GET');
         $response = $application->routeHttpRequest($request);
 
+        expect($response->getStatusCode())->toBe(200);
         expect((string)$response->getBody())->toBe('hello world');
     });
 
@@ -74,6 +77,7 @@ describe('The application routes a request', function () {
         $request = $generatePSR7Request('/', 'GET');
         $response = $application->routeHttpRequest($request);
 
+        expect($response->getStatusCode())->toBe(200);
         expect((string)$response->getBody())->toBe('home!');
     });
 
@@ -101,6 +105,7 @@ describe('The application routes a request', function () {
         $request = $generatePSR7Request('/with-config', 'GET');
         $response = $application->routeHttpRequest($request);
 
+        expect($response->getStatusCode())->toBe(200);
         expect((string)$response->getBody())->toBe('a thing');
     });
 
@@ -108,6 +113,7 @@ describe('The application routes a request', function () {
         $request = $generatePSR7Request('/customer/foo', 'GET');
         $response = $application->routeHttpRequest($request);
 
+        expect($response->getStatusCode())->toBe(200);
         expect((string)$response->getBody())->toBe('Customer: foo');
     });
 });

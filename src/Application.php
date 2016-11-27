@@ -8,6 +8,7 @@ namespace Hatcher;
 use \Composer\Autoload\ClassLoader;
 use Hatcher\ApplicationSegment;
 use Hatcher\Config;
+use Hatcher\DefaultApplication\Whoops\HtmlSafeHandler;
 use Hatcher\DirectoryDi;
 use Hatcher\Exception;
 use Hatcher\ModuleManager;
@@ -69,9 +70,7 @@ class Application extends ApplicationSegment
         $di = new DirectoryDi($directory . '/services', [$this]);
         parent::__construct($directory, $di);
 
-        if ($this->isDev()) {
-            $this->registerErrorHandler();
-        }
+        $this->registerErrorHandler();
 
         $this->cacheDirectory = $this->resolvePath('cache/_app');
 
@@ -154,8 +153,11 @@ class Application extends ApplicationSegment
     protected function registerErrorHandler()
     {
         $run     = new WhoopsRun;
-        $handler = new PrettyPageHandler;
-        $run->pushHandler($handler);
         $run->register();
+        if($this->isDev()){
+            $run->pushHandler(new PrettyPageHandler);
+        } else {
+            $run->pushHandler(new HtmlSafeHandler($this));
+        }
     }
 }

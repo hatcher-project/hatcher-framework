@@ -5,6 +5,7 @@
 
 namespace Hatcher;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -31,4 +32,40 @@ function requestMatchesHost(ServerRequestInterface $request, string ...$hosts)
 {
     $reqHost = $request->getServerParams()['SERVER_NAME'];
     return in_array($reqHost, $hosts);
+}
+
+/**
+ * Send http response
+ *
+ * from zend diactoros emitter
+ *
+ * @param ResponseInterface $response
+ * @throws Exception
+ */
+function sendResponse(ResponseInterface $response){
+    if (headers_sent()) {
+        throw new \Hatcher\Exception('Unable to emit response; headers already sent');
+    }
+
+    // Status code
+    http_response_code($response->getStatusCode());
+
+    // Headers
+    $headers = $response->getHeaders();
+    foreach ($headers as $header => $values) {
+        $first = true;
+        foreach ($values as $value) {
+            header($header . ':' . $value, $first);
+            $first = false;
+        }
+    }
+
+    // Flush ob
+    $maxBufferLevel = ob_get_level();
+    while (ob_get_level() > $maxBufferLevel) {
+        ob_end_flush();
+    }
+
+    // Body
+    echo $response->getBody();
 }

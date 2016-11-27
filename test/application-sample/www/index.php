@@ -1,10 +1,12 @@
 <?php
 
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Response\SapiEmitter;
+use function \Hatcher\sendResponse;
 
+/** @var \Hatcher\Application $application */
 $application = require __DIR__ . '/../bootstrap.php';
 
 $request = ServerRequestFactory::fromGlobals();
 $response = $application->routeHttpRequest($request);
-(new SapiEmitter())->emit($response);
+
+sendResponse($response);
