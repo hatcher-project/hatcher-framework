@@ -33,7 +33,7 @@ class HtmlSafeHandler extends Handler
     public function handle()
     {
 
-        require $this->application->resolvePath('templates/error.html');
+        require $this->application->resolvePath('resources/templates/error.html');
 
         return Handler::QUIT;
     }

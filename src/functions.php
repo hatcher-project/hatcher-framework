@@ -68,5 +68,7 @@ function sendResponse(ResponseInterface $response)
     }
 
     // Body
+    // @codingStandardsIgnoreStart
     echo $response->getBody();
+    // @codingStandardsIgnoreEnd
 }
