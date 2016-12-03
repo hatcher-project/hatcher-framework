@@ -12,16 +12,16 @@ use Hatcher\DefaultApplication\Whoops\HtmlSafeHandler;
 use Hatcher\DirectoryDi;
 use Hatcher\Exception;
 use Hatcher\ModuleManager;
+use Interop\Http\Middleware\DelegateInterface;
+use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run as WhoopsRun;
-use Zend\Diactoros\Response\SapiEmitter;
-use Zend\Diactoros\ServerRequestFactory;
 use Hatcher\ModuleManager\ModuleManagerInterface;
 use Hatcher\ModuleManager\ApplicationModuleManager;
 
-class Application extends ApplicationSegment
+class Application extends ApplicationSegment implements ServerMiddlewareInterface
 {
 
     /**
@@ -53,12 +53,11 @@ class Application extends ApplicationSegment
 
 
     /**
-     * Application constructor.
      * @param string $directory
      * @param ClassLoader $classLoader
      * @param array $options list of application initialisation options
-     * Possible values:
-     * - dev: true to enable dev mode and profiling
+     * Possible options:
+     * - dev: true to enable dev mode and profiling (default to false)
      * - env: environment such as "production", "devel"... (default to "production")
      */
     public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
@@ -77,6 +76,10 @@ class Application extends ApplicationSegment
         $this->init();
     }
 
+    /**
+     * Loads initialization file
+     * @throws \Hatcher\Exception
+     */
     private function init()
     {
         $initFile = $this->resolvePath('application.php');
@@ -107,6 +110,7 @@ class Application extends ApplicationSegment
     }
 
     /**
+     * Application env (dev/production...)
      * @return string
      */
     public function getEnv()
@@ -114,6 +118,10 @@ class Application extends ApplicationSegment
         return $this->env;
     }
 
+    /**
+     * Cache directory for application internal cache
+     * @return string
+     */
     public function getCacheDirectory()
     {
         return $this->cacheDirectory;
@@ -128,6 +136,11 @@ class Application extends ApplicationSegment
         return $this->classLoader;
     }
 
+    /**
+     * Get the module manager the contains the modules of the application and is able to choose a module
+     * for a given request
+     * @return ModuleManagerInterface
+     */
     public function getModuleManager(): ModuleManagerInterface
     {
         if (!$this->moduleManager) {
@@ -137,17 +150,41 @@ class Application extends ApplicationSegment
         return $this->moduleManager;
     }
 
-    public function getInitialisationValue($value)
+    /**
+     * Get the value of a named initialisation value passed during the construction of the application
+     * @param string $value
+     * @return null
+     */
+    public function getInitialisationValue(string $value)
     {
         return $this->initialisationValues[$value] ?? null;
     }
 
+    /**
+     * Single pass middleware from http-interop/http-middleware
+     *
+     * @inheritdoc
+     */
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    {
+        return $this->routeHttpRequest($request);
+    }
+
+    /**
+     * Community double pass middleware
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
+        return $this->routeHttpRequest($request);
+    }
+
     public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface
     {
+
         $module = $this->getModuleManager()
             ->getModuleForRequest($request);
 
-        return $module->dispatchRequest($request);
+        return $module->routeHttpRequest($request);
     }
 
     protected function registerErrorHandler()

@@ -5,6 +5,7 @@
 
 namespace Hatcher\DefaultApplication\Module;
 
+use GuzzleHttp\Psr7\Response;
 use Hatcher\Application;
 use Hatcher\ApplicationSegment;
 use Hatcher\DefaultApplication\Module\RouteHandler;
@@ -13,6 +14,8 @@ use Hatcher\DirectoryDi;
 use Hatcher\Exception;
 use Hatcher\Exception\NotFound;
 use Hatcher\RouteHandlerInterface;
+use Interop\Http\Middleware\DelegateInterface;
+use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,10 +28,8 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Router;
-use Zend\Diactoros\Response\EmptyResponse;
-use Zend\Diactoros\Response\HtmlResponse;
 
-class Module extends \Hatcher\AbstractModule
+class Module extends \Hatcher\AbstractModule implements ServerMiddlewareInterface
 {
 
     private $routeHandler;
@@ -43,24 +44,6 @@ class Module extends \Hatcher\AbstractModule
     {
         $cache = $this->application->getCacheDirectory();
         return $cache . '/module/' . $this->getName() . '/' . $path;
-    }
-
-
-
-    public function getNotFoundHandler()
-    {
-        return [
-            '_action' => 'not-found',
-            '_route'  => '&:notfound'
-        ];
-    }
-
-    public function getErrorHandler()
-    {
-        return [
-            '_action' => 'error',
-            '_route'  => '&:error'
-        ];
     }
 
     /**
@@ -99,11 +82,13 @@ class Module extends \Hatcher\AbstractModule
         }
     }
 
-    public function dispatchRequest(ServerRequestInterface $request): ResponseInterface
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
+        return $this->routeHttpRequest($request);
+    }
 
-        /* @var $router Router */
-
+    public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface
+    {
         try {
             try {
                 $virtualPath = $this->extractRequestVirtualPath($request);
@@ -116,15 +101,15 @@ class Module extends \Hatcher\AbstractModule
                 $router = $this->getDI()->get('router');
                 $match = $router->match($virtualPath);
 
-                return $this->getRouteHandler()->handle($match, $request);
-
             // HANDLE NOT FOUND
             } catch (ResourceNotFoundException $e) {
                 if ($router && $notFoundHandler = $this->getNotFoundHandler()) {
                     return $this->getRouteHandler()->handle($notFoundHandler, $request);
                 }
-                return new HtmlResponse('Page not found!', 404);
+                return new Response(404, [], \GuzzleHttp\Psr7\stream_for('Page not found!'));
             }
+
+            return $this->getRouteHandler()->handle($match, $request);
 
         // HANDLE ERRORS
         } catch (\Exception $e) {
@@ -134,8 +119,9 @@ class Module extends \Hatcher\AbstractModule
             } else {
                 if ($errorHandler = $this->getErrorHandler()) {
                     return $this->getRouteHandler()->handle($errorHandler, $request);
+                } else {
+                    throw $e;
                 }
-                return new EmptyResponse(500);
             }
         }
     }

@@ -23,3 +23,7 @@ with-config:
 
 customer:
     path: /customer/{id}
+
+
+with-middleware:
+    path: /with-middleware

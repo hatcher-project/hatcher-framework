@@ -8,10 +8,9 @@ namespace pho;
 use Hatcher\Application;
 use Hatcher\Config;
 use Hatcher\DI;
-use Hatcher\ModuleManager\RegisteredModules;
 use Hatcher\ModuleRouter;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Stream;
+use GuzzleHttp\Psr7\ServerRequest;
+use GuzzleHttp\Psr7\Stream;
 
 describe('The application routes a request', function () {
 
@@ -26,19 +25,19 @@ describe('The application routes a request', function () {
 
         $serverParams = ['SERVER_NAME' => $remoteAddress];
         $fileParams = [];
-        $body = new Stream('php://memory', 'r+');
+        $body = new Stream(fopen('php://memory', 'r+'));
         $headers = [];
 
         if (count($queryData) > 0) {
             $url .= '?' . http_build_query($queryData);
         }
         $request = new ServerRequest(
-            $serverParams,
-            $fileParams,
-            $url,
             $method,
-            $body,
-            $headers
+            $url,
+            $headers,
+            $body = null,
+            '1.1',
+            $serverParams
         );
 
         if ($data) {
@@ -115,5 +114,15 @@ describe('The application routes a request', function () {
 
         expect($response->getStatusCode())->toBe(200);
         expect((string)$response->getBody())->toBe('Customer: foo');
+    });
+
+    it('should execute middlewares when calling /with-middleware', function () use ($application, $generatePSR7Request) {
+        $request = $generatePSR7Request('/with-middleware', 'GET');
+        $response = $application->routeHttpRequest($request);
+
+        expect($response->getStatusCode())->toBe(200);
+        expect((string)$response->getBody())->toBe('Homer is: simpsons');
+        expect((string)$response->getHeaderLine('homerValue'))->toBe('simpsons');
+        expect((string)$response->getHeaderLine('foobar'))->toBe('baz');
     });
 });

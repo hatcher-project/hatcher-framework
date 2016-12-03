@@ -5,7 +5,6 @@
 
 namespace Hatcher\DefaultApplication\Module;
 
-use Aura\Router\Route;
 use Hatcher\Action;
 use Hatcher\Exception;
 use Hatcher\Exception\InvalidResponse;
@@ -13,9 +12,11 @@ use Hatcher\AbstractModule;
 use Hatcher\RouteHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\Response\JsonResponse;
+use function \GuzzleHttp\Psr7\stream_for;
 
+/**
+ * Takes route parameters returned from the router and executes the matching action
+ */
 class RouteHandler implements RouteHandlerInterface
 {
 
@@ -46,36 +47,25 @@ class RouteHandler implements RouteHandlerInterface
             $route['_action'] = $route['_route'];
         }
 
-        $response = $this->dispatchAction($route, $request);
-
-        if ($response instanceof ResponseInterface) {
-            return $response;
-        } elseif (is_array($response)) {
-            return new JsonResponse($response);
-        } elseif (is_string($response)) {
-            return new HtmlResponse($response);
-        } else {
-            $typeError = null;
-            if (null == $response) {
-                $typeError = 'NULL';
-            } elseif (is_object($response)) {
-                $typeError = 'Instance of class ' . get_class($response);
-            } else {
-                $typeError = var_export($typeError, true);
-            }
-            throw new InvalidResponse(
-                "Invalid response from controller. $typeError returned but expected instance of ResponseInterface"
-            );
-        }
+        $action = $this->getAction($route['_action'], $route, $request);
+        return $this->executeAction($action, $route, $request);
     }
 
-    private function dispatchAction(array $route, ServerRequestInterface $request)
-    {
-        if (!isset($route['_action'])) {
-            throw new Exception('No action found in the route ' . $route['_route']);
-        }
+    /**
+     * Find the action instance
+     * @param string $actionName
+     * @param array $route
+     * @param ServerRequestInterface $request
+     * @return Action
+     * @throws Exception
+     */
+    private function getAction(
+        string $actionName,
+        array $route,
+        ServerRequestInterface $request
+    ) : Action {
 
-        $actionFile = $this->module->resolvePath('actions/' . $route['_action'] . '.php');
+        $actionFile = $this->module->resolvePath('actions/' . $actionName . '.php');
         if (!file_exists($actionFile)) {
             throw new Exception('Action file does not exist: ' . $actionFile);
         }
@@ -89,7 +79,45 @@ class RouteHandler implements RouteHandlerInterface
             );
         }
 
-        $action->init($request, $route, $this->module);
-        return $action->execute();
+        return $action;
+    }
+
+    /**
+     * Executes the action, handling middleware
+     * @param Action $action
+     * @param array $route
+     * @param ServerRequestInterface $request
+     * @return mixed|ResponseInterface
+     * @throws Exception
+     */
+    private function executeAction(Action $action, array $route, ServerRequestInterface $request)
+    {
+        try {
+            $action->init($route, $this->module);
+            $stack = $action->middlewares();
+            $stack[] = $action;
+
+            return $this->executeMiddlewareStack($stack, $request);
+        } catch (Exception\NotFound $e) {
+            return $this->handle($this->module->getNotFoundHandler(), $request);
+        }
+    }
+
+    private function executeMiddlewareStack($stack, ServerRequestInterface $request)
+    {
+        $f = $this->makeNext(0, $stack);
+        return call_user_func($f, $request);
+    }
+
+    private function makeNext($current, $stack)
+    {
+        if ($current >= count($stack)) {
+            return function (ServerRequestInterface $request) {
+                throw new Exception('request stack has been consumed without response');
+            };
+        }
+        return function (ServerRequestInterface $request) use ($current, $stack) : ResponseInterface {
+            return call_user_func($stack[$current], $request, $this->makeNext($current + 1, $stack));
+        };
     }
 }

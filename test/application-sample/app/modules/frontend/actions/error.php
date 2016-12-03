@@ -5,13 +5,18 @@
 
 namespace Hatcher;
 
+use GuzzleHttp\Psr7\Response;
 use Hatcher\Action;
-use Zend\Diactoros\Response\HtmlResponse;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 return new class extends Action{
 
-    public function execute()
+    public function execute(ServerRequestInterface $request)
     {
-        return new HtmlResponse('error page', 500);
+        $response = new Response();
+        $response = $response->withStatus(500);
+        $response->getBody()->write('error page');
+        return $response;
     }
 };

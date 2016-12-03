@@ -49,5 +49,21 @@ abstract class AbstractModule extends ApplicationSegment
         return $this->name;
     }
 
-    abstract public function dispatchRequest(ServerRequestInterface $request): ResponseInterface;
+    public function getNotFoundHandler()
+    {
+        return [
+            '_action' => 'not-found',
+            '_route'  => '&:notfound'
+        ];
+    }
+
+    public function getErrorHandler()
+    {
+        return [
+            '_action' => 'error',
+            '_route'  => '&:error'
+        ];
+    }
+
+    abstract public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface;
 }
