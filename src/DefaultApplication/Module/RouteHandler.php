@@ -39,10 +39,10 @@ class RouteHandler implements RouteHandlerInterface
     {
 
         if (!isset($route['_route'])) {
-            $route['&:unknown'];
             if (!isset($route['_action'])) {
-                throw new Exception('Unable to dispatch the given route');
+                throw new Exception('Unable to dispatch the given route: No action provided');
             }
+            $route['_route'] = '&:unknown';
         } elseif (!isset($route['_action'])) {
             $route['_action'] = $route['_route'];
         }
