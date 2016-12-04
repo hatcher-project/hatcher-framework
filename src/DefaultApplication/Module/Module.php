@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Loader\YamlFileLoader;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Router;
 
-class Module extends \Hatcher\AbstractModule implements ServerMiddlewareInterface
+class Module extends \Hatcher\AbstractModule
 {
 
     private $routeHandler;
@@ -82,9 +82,20 @@ class Module extends \Hatcher\AbstractModule implements ServerMiddlewareInterfac
         }
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function getNotFoundHandler()
     {
-        return $this->routeHttpRequest($request);
+        return [
+            '_action' => 'not-found',
+            '_route'  => '&:notfound'
+        ];
+    }
+
+    public function getErrorHandler()
+    {
+        return [
+            '_action' => 'error',
+            '_route'  => '&:error'
+        ];
     }
 
     public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface
@@ -93,7 +104,7 @@ class Module extends \Hatcher\AbstractModule implements ServerMiddlewareInterfac
             try {
                 $virtualPath = $this->extractRequestVirtualPath($request);
 
-                if ($virtualPath{0} !== '/') {
+                if (empty($virtualPath) || $virtualPath{0} !== '/') {
                     $virtualPath = '/' . $virtualPath;
                 }
 

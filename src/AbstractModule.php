@@ -9,10 +9,12 @@ use Hatcher\Application;
 use Hatcher\ApplicationSegment;
 use Hatcher\DefaultApplication\DefaultDI;
 use Hatcher\DirectoryDi;
+use Interop\Http\Middleware\DelegateInterface;
+use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract class AbstractModule extends ApplicationSegment
+abstract class AbstractModule extends ApplicationSegment implements ServerMiddlewareInterface
 {
 
     /**
@@ -49,20 +51,14 @@ abstract class AbstractModule extends ApplicationSegment
         return $this->name;
     }
 
-    public function getNotFoundHandler()
+    public function setApplication($application)
     {
-        return [
-            '_action' => 'not-found',
-            '_route'  => '&:notfound'
-        ];
+        $this->application = $application;
     }
 
-    public function getErrorHandler()
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
-        return [
-            '_action' => 'error',
-            '_route'  => '&:error'
-        ];
+        return $this->routeHttpRequest($request);
     }
 
     abstract public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface;
