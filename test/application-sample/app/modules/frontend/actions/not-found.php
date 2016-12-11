@@ -14,9 +14,8 @@ return new class extends Action{
 
     public function execute(ServerRequestInterface $request)
     {
-        $response = new Response();
-        $response = $response->withStatus(404);
-        $response->getBody()->write('custom not found');
-        return $response;
+        return $this->response()
+            ->statusCode(404)
+            ->html('custom not found');
     }
 };

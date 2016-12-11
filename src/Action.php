@@ -71,6 +71,8 @@ abstract class Action
             return $this->module->getDI()->get('response')->withBody(stream_for($response));
         } elseif ($response instanceof ResponseInterface) {
             return $response;
+        } elseif ($response instanceof ResponseBuilder) {
+            return $response->getResponse();
         } elseif (is_array($response)) {
             $data = json_encode($response);
             $response = $this->module->getDI()->get('response')->withBody(stream_for($data));
@@ -89,7 +91,7 @@ abstract class Action
     }
 
     /**
-     * @return ResponseInterface|string|array
+     * @return ResponseInterface|string|array|ResponseBuilder
      */
     abstract public function execute(ServerRequestInterface $request);
 
@@ -101,6 +103,14 @@ abstract class Action
     public function notFound()
     {
         throw new NotFound();
+    }
+
+    /**
+     * @return ResponseBuilder
+     */
+    public function response()
+    {
+        return new ResponseBuilder($this->module);
     }
 
 
