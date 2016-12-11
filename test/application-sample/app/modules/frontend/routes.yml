@@ -27,3 +27,6 @@ customer:
 
 with-middleware:
     path: /with-middleware
+
+with-view:
+    path: /with-view
