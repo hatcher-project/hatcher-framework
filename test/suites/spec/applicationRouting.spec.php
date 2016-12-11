@@ -125,4 +125,12 @@ describe('The application routes a request', function () {
         expect((string)$response->getHeaderLine('homerValue'))->toBe('simpsons');
         expect((string)$response->getHeaderLine('foobar'))->toBe('baz');
     });
+
+    it('should render view when calling /with-view', function () use ($application, $generatePSR7Request) {
+        $request = $generatePSR7Request('/with-view', 'GET');
+        $response = $application->routeHttpRequest($request);
+
+        expect($response->getStatusCode())->toBe(200);
+        expect((string)$response->getBody())->toBe('[foo from frontend bar from frontend] from frontend');
+    });
 });

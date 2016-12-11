@@ -96,14 +96,16 @@ class ResponseBuilder
         // TODO
     }
 
-    public function plainText($text){
+    public function plainText($text)
+    {
         $this->response = $this->response->withHeader('Content-Type', 'text/plain');
         $this->response->getBody()->write($text);
 
         return $this;
     }
 
-    public function html($text){
+    public function html($text)
+    {
         $this->response = $this->response->withHeader('Content-Type', 'text/html');
         $this->response->getBody()->write($text);
 
@@ -112,6 +114,15 @@ class ResponseBuilder
 
     public function view(string $viewName, array $data = [])
     {
-        // TODO
+        if (isset($viewName{0}) && '@' !== $viewName{0}) {
+            $viewName = '@Module:' . $this->module->getName() . '/' . $viewName;
+        }
+        $viewRendered = $this->module->getApplication()->getDI()->get('view')->render($viewName, $data);
+
+
+        $this->response = $this->response->withHeader('Content-Type', 'text/html');
+        $this->response->getBody()->write($viewRendered);
+
+        return $this;
     }
 }
