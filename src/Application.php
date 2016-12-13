@@ -21,7 +21,7 @@ use Whoops\Run as WhoopsRun;
 use Hatcher\ModuleManager\ModuleManagerInterface;
 use Hatcher\ModuleManager\ApplicationModuleManager;
 
-class Application extends ApplicationSegment implements ServerMiddlewareInterface
+class Application extends ApplicationSegment implements ApplicationAwareInterface
 {
 
     /**
@@ -119,6 +119,14 @@ class Application extends ApplicationSegment implements ServerMiddlewareInterfac
     }
 
     /**
+     * @inheritdoc
+     */
+    public function getApplication() : Application
+    {
+        return $this;
+    }
+
+    /**
      * Cache directory for application internal cache
      * @return string
      */
@@ -161,23 +169,11 @@ class Application extends ApplicationSegment implements ServerMiddlewareInterfac
     }
 
     /**
-     * Single pass middleware from http-interop/http-middleware
-     *
-     * @inheritdoc
+     * Routes the given http request
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     * @throws \Exception
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-    {
-        return $this->routeHttpRequest($request);
-    }
-
-    /**
-     * Community double pass middleware
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-    {
-        return $this->routeHttpRequest($request);
-    }
-
     public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface
     {
 

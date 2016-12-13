@@ -14,7 +14,7 @@ use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-abstract class AbstractModule extends ApplicationSegment implements ServerMiddlewareInterface
+abstract class AbstractModule extends ApplicationSegment implements ApplicationAwareInterface
 {
 
     /**
@@ -38,7 +38,7 @@ abstract class AbstractModule extends ApplicationSegment implements ServerMiddle
     /**
      * @return Application
      */
-    public function getApplication()
+    public function getApplication() : Application
     {
         return $this->application;
     }
@@ -49,16 +49,6 @@ abstract class AbstractModule extends ApplicationSegment implements ServerMiddle
     public function getName()
     {
         return $this->name;
-    }
-
-    public function setApplication($application)
-    {
-        $this->application = $application;
-    }
-
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
-    {
-        return $this->routeHttpRequest($request);
     }
 
     abstract public function routeHttpRequest(ServerRequestInterface $request): ResponseInterface;
