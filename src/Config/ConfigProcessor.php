@@ -15,11 +15,6 @@ class ConfigProcessor extends Config
 
     public function __construct($path, $recursion = 0)
     {
-
-        if ($path == '/home/bob/PhpstormProject/hatcher-framework/test/application-sample/app/importReplace.php') {
-            die();
-        }
-
         if ($recursion > 100) {
             throw new Exception('Recursive config import detected');
         }
