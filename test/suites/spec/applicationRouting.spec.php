@@ -11,6 +11,8 @@ use Hatcher\DI;
 use Hatcher\ModuleRouter;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Stream;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 describe('The application routes a request', function () {
 
@@ -54,10 +56,18 @@ describe('The application routes a request', function () {
     /* @var $application \Hatcher\Application */
     $application = include $GLOBALS['applicationSample'] . '/../bootstrap.php';
 
+    $sendRequest = function(ServerRequestInterface $requestInterface) use ($application) {
+        try{
+            return $application->routeHttpRequest($requestInterface);
+        } catch (\Exception $e) {
+            die('kkk');
+        }
+    };
 
-    it('should return pong when calling /ping', function () use ($application, $generatePSR7Request) {
+
+    it('should return pong when calling /ping', function () use ($sendRequest, $generatePSR7Request) {
         $request = $generatePSR7Request('/ping', 'GET');
-        $response = $application->routeHttpRequest($request);
+        $response = $sendRequest($request);
 
         expect($response->getStatusCode())->toBe(200);
         expect((string)$response->getBody())->toBe('pong');

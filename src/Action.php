@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use Hatcher\Exception\InvalidResponse;
 use Hatcher\Exception\NotFound;
+use Hatcher\Router\MatchedRoute;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,7 +39,7 @@ abstract class Action
 
     private $initDone = false;
 
-    final public function init(array $route, AbstractModule $module)
+    final public function init(MatchedRoute $route, AbstractModule $module)
     {
         if (true == $this->initDone) {
             throw new Exception('Action was already initialized. Action should only be initialized once.');

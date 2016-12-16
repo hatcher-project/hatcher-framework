@@ -10,6 +10,7 @@ use Hatcher\Exception;
 use Hatcher\Exception\InvalidResponse;
 use Hatcher\AbstractModule;
 use Hatcher\RouteHandlerInterface;
+use Hatcher\Router\MatchedRoute;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use function \GuzzleHttp\Psr7\stream_for;
@@ -35,16 +36,11 @@ class RouteHandler implements RouteHandlerInterface
     }
 
 
-    public function handle(array $route, ServerRequestInterface $request): ResponseInterface
+    public function handle(MatchedRoute $route, ServerRequestInterface $request): ResponseInterface
     {
 
-        if (!isset($route['_route'])) {
-            if (!isset($route['_action'])) {
-                throw new Exception('Unable to dispatch the given route: No action provided');
-            }
-            $route['_route'] = '&:unknown';
-        } elseif (!isset($route['_action'])) {
-            $route['_action'] = $route['_route'];
+        if (!isset($route['_action'])) {
+            $route['_action'] = $route->getRouteName();
         }
 
         $action = $this->getAction($route['_action'], $route, $request);
@@ -61,7 +57,7 @@ class RouteHandler implements RouteHandlerInterface
      */
     private function getAction(
         string $actionName,
-        array $route,
+        MatchedRoute $route,
         ServerRequestInterface $request
     ) : Action {
 
@@ -74,7 +70,7 @@ class RouteHandler implements RouteHandlerInterface
 
         if (!($action instanceof Action)) {
             throw new Exception(
-                'action ' . $route['_action'] . ' is not an instance of Hatcher\Action.' .
+                'action ' . $route['data']['action'] . ' is not an instance of Hatcher\Action.' .
                 ' using the class: ' . get_class($action)
             );
         }
@@ -90,7 +86,7 @@ class RouteHandler implements RouteHandlerInterface
      * @return mixed|ResponseInterface
      * @throws Exception
      */
-    private function executeAction(Action $action, array $route, ServerRequestInterface $request)
+    private function executeAction(Action $action, MatchedRoute $route, ServerRequestInterface $request)
     {
         try {
             $action->init($route, $this->module);

@@ -25,4 +25,4 @@ if (file_exists(__DIR__ . '/.env')) {
     ];
 }
 
-return new Application(__DIR__ . '/app', $composer, $options);
+return new Application(__DIR__ . '/app', $options);

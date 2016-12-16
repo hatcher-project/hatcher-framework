@@ -15,7 +15,7 @@ use Symfony\Component\Config\FileLocatorInterface;
  * It is located in the file system and offers a service locator
  *
  */
-class ApplicationSegment extends FileLocator
+class ApplicationSegment
 {
 
     /**
@@ -32,7 +32,6 @@ class ApplicationSegment extends FileLocator
 
     public function __construct(string $directory, DI $di)
     {
-        parent::__construct([$directory]);
         $this->di = $di;
         $this->directory = $directory;
     }

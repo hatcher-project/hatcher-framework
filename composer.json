@@ -33,15 +33,13 @@
 
     "psr/http-message" : "1.0",
     "filp/whoops": "2.0.x-dev",
-    "symfony/routing": "^3.0.0",
-    "symfony/config": "^3.0.0",
-    "tedivm/stash": "^0.14.1",
     "guzzlehttp/psr7": "^1.3",
     "twig/twig": "^1.27",
     "vlucas/phpdotenv": "^2.4",
     "hassankhan/config": "~0.10.0",
     "http-interop/http-middleware": "^0.3.0",
-    "phroute/phroute": "^2.1"
+    "phroute/phroute": "^2.1",
+    "nikic/fast-route": "^1.0"
   },
 
   "require-dev":{

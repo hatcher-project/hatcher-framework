@@ -6,6 +6,7 @@
 namespace Hatcher;
 
 use Aura\Router\Route;
+use Hatcher\Router\MatchedRoute;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -17,5 +18,5 @@ interface RouteHandlerInterface
      * @param $data
      * @return ResponseInterface
      */
-    public function handle(array $routeData, ServerRequestInterface $request): ResponseInterface;
+    public function handle(MatchedRoute $routeData, ServerRequestInterface $request): ResponseInterface;
 }

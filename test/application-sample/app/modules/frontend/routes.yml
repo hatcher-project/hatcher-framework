@@ -22,7 +22,10 @@ with-config:
     path: /with-config
 
 customer:
-    path: /customer/{id}
+    path: /customer[/{id}]
+    defaults:
+        adaz: azdazd
+        id: 0
 
 
 with-middleware:

@@ -24,10 +24,6 @@ use Hatcher\ModuleManager\ApplicationModuleManager;
 class Application extends ApplicationSegment implements ApplicationAwareInterface
 {
 
-    /**
-     * @var ClassLoader
-     */
-    protected $classLoader;
 
     /**
      * @var bool
@@ -60,11 +56,10 @@ class Application extends ApplicationSegment implements ApplicationAwareInterfac
      * - dev: true to enable dev mode and profiling (default to false)
      * - env: environment such as "production", "devel"... (default to "production")
      */
-    public function __construct(string $directory, ClassLoader $classLoader, array $options = [])
+    public function __construct(string $directory, array $options = [])
     {
         $this->dev = (bool) ($options['dev'] ?? false);
         $this->env = (string) ($options['env'] ?? 'production');
-        $this->classLoader = $classLoader;
 
         $di = new DirectoryDi($directory . '/services', [$this]);
         parent::__construct($directory, $di);
@@ -135,14 +130,6 @@ class Application extends ApplicationSegment implements ApplicationAwareInterfac
         return $this->cacheDirectory;
     }
 
-    /**
-     * The application classLoader from composer. Aims to dynamically register module paths
-     * @return ClassLoader
-     */
-    public function getClassLoader(): ClassLoader
-    {
-        return $this->classLoader;
-    }
 
     /**
      * Get the module manager the contains the modules of the application and is able to choose a module

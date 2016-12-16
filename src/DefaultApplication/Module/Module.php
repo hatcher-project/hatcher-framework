@@ -57,30 +57,6 @@ class Module extends \Hatcher\AbstractModule
         return $this->routeHandler;
     }
 
-    private function extractRequestVirtualPath(ServerRequestInterface $request)
-    {
-        $params = $request->getServerParams();
-        $requestScriptName = isset($params['SCRIPT_NAME']) ? $params['SCRIPT_NAME'] : null;
-        $requestUri = $request->getUri()->getPath();
-        if ($requestScriptName) {
-            $virtualPath = $requestUri;
-            $basePath = null;
-            $requestScriptDir = dirname($requestScriptName);
-            if (stripos($requestUri, $requestScriptName) === 0) {
-                $basePath = $requestScriptName;
-            } elseif ($requestScriptDir !== '/' && stripos($requestUri, $requestScriptDir) === 0) {
-                $basePath = $requestScriptDir;
-            }
-
-            if ($basePath) {
-                $virtualPath = ltrim(substr($requestUri, strlen($basePath)), '/');
-            }
-
-            return $virtualPath;
-        } else {
-            return $requestUri;
-        }
-    }
 
     public function getNotFoundHandler()
     {
@@ -102,18 +78,13 @@ class Module extends \Hatcher\AbstractModule
     {
         try {
             try {
-                $virtualPath = $this->extractRequestVirtualPath($request);
-
-                if (empty($virtualPath) || $virtualPath{0} !== '/') {
-                    $virtualPath = '/' . $virtualPath;
-                }
 
                 /* @var $router Router */
                 $router = $this->getDI()->get('router');
-                $match = $router->match($virtualPath);
+                $match = $router->match($request);
 
             // HANDLE NOT FOUND
-            } catch (ResourceNotFoundException $e) {
+            } catch (NotFound $e) {
                 if ($router && $notFoundHandler = $this->getNotFoundHandler()) {
                     return $this->getRouteHandler()->handle($notFoundHandler, $request);
                 }
