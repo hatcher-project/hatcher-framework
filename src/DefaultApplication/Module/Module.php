@@ -10,6 +10,7 @@ use Hatcher\DirectoryDi;
 use Hatcher\Exception;
 use Hatcher\Exception\NotFound;
 use Hatcher\RouteHandlerInterface;
+use Hatcher\Router\MatchedRoute;
 use Hatcher\Router\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -63,7 +64,6 @@ class Module extends \Hatcher\AbstractModule
     {
         try {
             try {
-
                 /* @var $router Router */
                 $router = $this->getDI()->get('router');
                 $match = $router->match($request);
@@ -71,7 +71,7 @@ class Module extends \Hatcher\AbstractModule
             // HANDLE NOT FOUND
             } catch (NotFound $e) {
                 if ($router && $notFoundHandler = $this->getNotFoundHandler()) {
-                    return $this->getRouteHandler()->handle($notFoundHandler, $request);
+                    return $this->getRouteHandler()->handle(new MatchedRoute('&:error', $notFoundHandler), $request);
                 }
                 return new Response(404, [], \GuzzleHttp\Psr7\stream_for('Page not found!'));
             }
@@ -85,7 +85,7 @@ class Module extends \Hatcher\AbstractModule
                 throw $e;
             } else {
                 if ($errorHandler = $this->getErrorHandler()) {
-                    return $this->getRouteHandler()->handle($errorHandler, $request);
+                    return $this->getRouteHandler()->handle(new MatchedRoute('&:error', $errorHandler), $request);
                 } else {
                     throw $e;
                 }

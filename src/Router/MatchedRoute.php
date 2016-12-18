@@ -5,7 +5,6 @@
 
 namespace Hatcher\Router;
 
-
 class MatchedRoute extends \ArrayObject
 {
 
@@ -38,5 +37,4 @@ class MatchedRoute extends \ArrayObject
     {
         return $this->data[$name] ?? $default;
     }
-
 }

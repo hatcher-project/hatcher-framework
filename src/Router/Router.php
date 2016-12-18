@@ -79,14 +79,16 @@ class Router implements RouterInterface
     /**
      * @return RouteParser
      */
-    private function getRouteParser(){
-        if(!$this->routeParser){
+    private function getRouteParser()
+    {
+        if (!$this->routeParser) {
             $this->routeParser = new StdParser();
         }
         return $this->routeParser;
     }
 
-    public function getRoutesLit(){
+    public function getRoutesLit()
+    {
         if (null === $this->routes) {
             $routes = new ConfigProcessor($this->routesFilePath);
             $this->routes = $routes->all();
@@ -94,12 +96,13 @@ class Router implements RouterInterface
         return $this->routes;
     }
 
-    private function getDispatcher(){
-        if(!$this->dispatcher){
+    private function getDispatcher()
+    {
+        if (!$this->dispatcher) {
             $this->dispatcher = \FastRoute\cachedDispatcher(function (RouteCollector $r) {
                 foreach ($this->getRoutesLit() as $name => $route) {
                     $route['name'] = $name;
-                    $r->addRoute($route['methods'] ?? ['GET'] , $route['path'], $route);
+                    $r->addRoute($route['methods'] ?? ['GET'], $route['path'], $route);
                     // TODO warn for invalid route patter
                 }
             }, [

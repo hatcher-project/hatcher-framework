@@ -30,8 +30,7 @@ class ModuleTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->application = new Application(
-            $GLOBALS['applicationSample'],
-            new ClassLoader()
+            $GLOBALS['applicationSample']
         );
         $this->module = new Module('frontend', $this->application->resolvePath('modules/frontend'), $this->application);
     }

@@ -52,8 +52,8 @@ describe('The application routes a request', function () {
     /* @var $application \Hatcher\Application */
     $application = include $GLOBALS['applicationSample'] . '/../bootstrap.php';
 
-    $sendRequest = function(ServerRequestInterface $requestInterface) use ($application) {
-        try{
+    $sendRequest = function (ServerRequestInterface $requestInterface) use ($application) {
+        try {
             return $application->routeHttpRequest($requestInterface);
         } catch (\Exception $e) {
             die('kkk');
@@ -86,7 +86,7 @@ describe('The application routes a request', function () {
         expect((string)$response->getBody())->toBe('home!');
     });
 
-    it('should return error 500 when action is not defined correctly', function () use ($application, $generatePSR7Request) {
+    it('should return error 500 when action is not defined correctly (using /errored)', function () use ($application, $generatePSR7Request) {
         $request = $generatePSR7Request('/errored', 'GET');
         $response = $application->routeHttpRequest($request);
 
@@ -95,7 +95,7 @@ describe('The application routes a request', function () {
     });
 
 
-    it('should return error 404 when route does not exist', function () use ($application, $generatePSR7Request) {
+    it('should return error 404 when route does not exist (using /thisRouteDoesNotExist)', function () use ($application, $generatePSR7Request) {
         $request = $generatePSR7Request('/thisRouteDoesNotExist', 'GET');
         $response = $application->routeHttpRequest($request);
 

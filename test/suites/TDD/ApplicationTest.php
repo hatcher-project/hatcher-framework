@@ -29,21 +29,16 @@ class ApplicationTest extends HatcherTestCase
     public function testIsDev()
     {
         // Default to false
-        $application = new Application('/dev/null', $GLOBALS['composer']);
+        $application = new Application('/dev/null');
         $this->assertFalse($application->isDev());
 
         // Explicit  setting
-        $application = new Application('/dev/null', $GLOBALS['composer'], ['dev' => true]);
+        $application = new Application('/dev/null', ['dev' => true]);
         $this->assertTrue($application->isDev());
-        $application = new Application('/dev/null', $GLOBALS['composer'], ['dev' => false]);
+        $application = new Application('/dev/null', ['dev' => false]);
         $this->assertFalse($application->isDev());
 
         // Test .env
         $this->assertTrue($this->application->isDev());
-    }
-
-    public function testGetClassLoader()
-    {
-        $this->assertInstanceOf(ClassLoader::class, $this->application->getClassLoader());
     }
 }
