@@ -38,7 +38,6 @@
     "vlucas/phpdotenv": "^2.4",
     "hassankhan/config": "~0.10.0",
     "http-interop/http-middleware": "^0.3.0",
-    "phroute/phroute": "^2.1",
     "nikic/fast-route": "^1.0"
   },
 
