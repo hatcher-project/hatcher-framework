@@ -5,7 +5,6 @@
 
 namespace Hatcher\Test\TDD;
 
-use Hatcher\Application;
 use Hatcher\ModuleManager\ModuleManagerInterface;
 use Hatcher\Test\HatcherTestCase;
 

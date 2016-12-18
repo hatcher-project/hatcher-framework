@@ -8,17 +8,17 @@
  */
 namespace Hatcher\Router;
 
+use FastRoute\DataGenerator;
 use FastRoute\Dispatcher;
-use Hatcher\Config\ConfigProcessor;
-use Hatcher\Exception\NotFound;
-use InvalidArgumentException;
-use RuntimeException;
-use Psr\Http\Message\ServerRequestInterface;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser;
 use FastRoute\RouteParser\Std as StdParser;
-use FastRoute\DataGenerator;
-use Hatcher\Router\RouterInterface;
+use Hatcher\Config\ConfigProcessor;
+use Hatcher\Exception\NotFound;
+use InvalidArgumentException;
+use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
+
 /**
  * Router
  *

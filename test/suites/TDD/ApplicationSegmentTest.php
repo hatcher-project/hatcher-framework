@@ -5,7 +5,6 @@
 
 namespace Hatcher\Test\TDD;
 
-use Composer\Autoload\ClassLoader;
 use Hatcher\ApplicationSegment;
 use Hatcher\Config;
 use Hatcher\DI;

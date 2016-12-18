@@ -5,7 +5,6 @@
 
 namespace Hatcher;
 
-use Hatcher\AbstractModule;
 use Psr\Http\Message\ResponseInterface;
 
 /**

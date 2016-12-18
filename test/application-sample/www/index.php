@@ -1,7 +1,7 @@
 <?php
 
-use \GuzzleHttp\Psr7\ServerRequest;
-use function \Hatcher\sendResponse;
+use GuzzleHttp\Psr7\ServerRequest;
+use function Hatcher\sendResponse;
 
 /** @var \Hatcher\Application $application */
 $application = require __DIR__ . '/../bootstrap.php';

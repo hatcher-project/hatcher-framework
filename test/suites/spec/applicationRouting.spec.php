@@ -5,13 +5,9 @@
 
 namespace pho;
 
-use Hatcher\Application;
-use Hatcher\Config;
-use Hatcher\DI;
-use Hatcher\ModuleRouter;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Stream;
-use Psr\Http\Message\RequestInterface;
+use Hatcher\Config;
 use Psr\Http\Message\ServerRequestInterface;
 
 describe('The application routes a request', function () {

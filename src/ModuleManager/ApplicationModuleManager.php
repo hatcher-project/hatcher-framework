@@ -6,10 +6,10 @@
 namespace Hatcher\ModuleManager;
 
 use Hatcher\Application;
+use Hatcher\DefaultApplication\Module\Module as DefaultModule;
 use Hatcher\DefaultApplication\Module\Module;
 use Hatcher\Exception;
 use Psr\Http\Message\ServerRequestInterface;
-use Hatcher\DefaultApplication\Module\Module as DefaultModule;
 
 class ApplicationModuleManager implements ModuleManagerInterface
 {

@@ -8,7 +8,6 @@ namespace Hatcher\Test\TDD;
 use Composer\Autoload\ClassLoader;
 use Hatcher\Application;
 use Hatcher\Config;
-use Hatcher\DI;
 use Hatcher\DefaultApplication\Module\Module;
 
 /**

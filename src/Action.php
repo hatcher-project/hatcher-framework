@@ -5,12 +5,9 @@
 
 namespace Hatcher;
 
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\ServerRequest;
 use Hatcher\Exception\InvalidResponse;
 use Hatcher\Exception\NotFound;
 use Hatcher\Router\MatchedRoute;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use function GuzzleHttp\Psr7\stream_for;

@@ -5,7 +5,6 @@
 
 namespace Hatcher\Test\TDD;
 
-use Hatcher\DI;
 use Hatcher\DirectoryDi;
 
 /**

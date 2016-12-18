@@ -5,21 +5,17 @@
 
 namespace Hatcher;
 
-use \Composer\Autoload\ClassLoader;
-use Hatcher\ApplicationSegment;
+use Composer\Autoload\ClassLoader;
 use Hatcher\Config;
 use Hatcher\DefaultApplication\Whoops\HtmlSafeHandler;
-use Hatcher\DirectoryDi;
 use Hatcher\Exception;
 use Hatcher\ModuleManager;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
+use Hatcher\ModuleManager\ApplicationModuleManager;
+use Hatcher\ModuleManager\ModuleManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run as WhoopsRun;
-use Hatcher\ModuleManager\ModuleManagerInterface;
-use Hatcher\ModuleManager\ApplicationModuleManager;
 
 class Application extends ApplicationSegment implements ApplicationAwareInterface
 {

@@ -5,15 +5,14 @@
 
 namespace Hatcher\DefaultApplication\Module;
 
+use Hatcher\AbstractModule;
 use Hatcher\Action;
 use Hatcher\Exception;
-use Hatcher\Exception\InvalidResponse;
-use Hatcher\AbstractModule;
 use Hatcher\RouteHandlerInterface;
 use Hatcher\Router\MatchedRoute;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use function \GuzzleHttp\Psr7\stream_for;
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Takes route parameters returned from the router and executes the matching action

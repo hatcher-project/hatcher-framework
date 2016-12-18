@@ -7,8 +7,7 @@ namespace Hatcher\View\Twig\TokenParser;
 
 use Hatcher\View\Twig\Node\HatcherInclude;
 use Twig_Error_Syntax;
-use Twig_NodeInterface;
-use Twig_Token ;
+use Twig_Token;
 
 class HatcherTokenParser extends \Twig_TokenParser
 {

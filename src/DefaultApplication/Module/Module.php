@@ -6,28 +6,13 @@
 namespace Hatcher\DefaultApplication\Module;
 
 use GuzzleHttp\Psr7\Response;
-use Hatcher\Application;
-use Hatcher\ApplicationSegment;
-use Hatcher\DefaultApplication\Module\RouteHandler;
-use Hatcher\DI;
 use Hatcher\DirectoryDi;
 use Hatcher\Exception;
 use Hatcher\Exception\NotFound;
 use Hatcher\RouteHandlerInterface;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
-use Psr\Http\Message\RequestInterface;
+use Hatcher\Router\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Hatcher\AbstractModule as BaseModule;
-use Symfony\Component\Config\ConfigCache;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\Config\Resource\FileResource;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Symfony\Component\Routing\Loader\YamlFileLoader;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Router;
 
 class Module extends \Hatcher\AbstractModule
 {

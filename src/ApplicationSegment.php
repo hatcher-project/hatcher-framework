@@ -5,7 +5,6 @@
 
 namespace Hatcher;
 
-use Hatcher\DI;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\FileLocatorInterface;
 

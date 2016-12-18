@@ -5,12 +5,7 @@
 
 namespace Hatcher;
 
-use Hatcher\Application;
-use Hatcher\ApplicationSegment;
 use Hatcher\DefaultApplication\DefaultDI;
-use Hatcher\DirectoryDi;
-use Interop\Http\Middleware\DelegateInterface;
-use Interop\Http\Middleware\ServerMiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
