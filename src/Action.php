@@ -6,7 +6,7 @@
 namespace Hatcher;
 
 use Hatcher\Exception\InvalidResponse;
-use Hatcher\Exception\NotFound;
+use Hatcher\Router\NotFound;
 use Hatcher\Router\MatchedRoute;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

@@ -1,11 +1,8 @@
 <?php
 /**
- * Slim Framework (http://slimframework.com)
- *
- * @link      https://github.com/slimphp/Slim
- * @copyright Copyright (c) 2011-2015 Josh Lockhart
- * @license   https://github.com/slimphp/Slim/blob/3.x/LICENSE.md (MIT License)
+ * @license see LICENSE
  */
+
 namespace Hatcher\Router;
 
 use FastRoute\DataGenerator;
@@ -13,21 +10,18 @@ use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser;
 use FastRoute\RouteParser\Std as StdParser;
-use Hatcher\Config\ConfigProcessor;
-use Hatcher\Exception\NotFound;
+use Hatcher\Router\NotFound;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
 /**
- * Router
+ * A router built on the top of FastRoute
  *
- * This class organizes Slim application route objects. It is responsible
- * for registering route objects, assigning names to route objects,
- * finding routes that match the current HTTP request, and creating
- * URLs for a named route.
+ * This router was largely inspired by the slim framework one
+ *
  */
-class Router implements RouterInterface
+abstract class Router
 {
     /**
      * Parser
@@ -37,16 +31,13 @@ class Router implements RouterInterface
     private $routeParser;
 
     /**
-     * @var string
-     */
-    private $routesFilePath;
-
-    /**
      * Base path used in pathFor()
      *
      * @var string
      */
     protected $basePath = '';
+
+    protected $cacheFile;
 
     /**
      * Named routes
@@ -54,26 +45,14 @@ class Router implements RouterInterface
      * @var []
      */
     private $routes = null;
-
     /**
      * @var \FastRoute\Dispatcher
      */
     protected $dispatcher;
 
-    /**
-     * @param string|array $routesDef
-     */
-    public function __construct($routesDef)
+    public function setCacheFile($cacheFile)
     {
-        if (is_string($routesDef)) {
-            $this->routesFilePath = $routesDef;
-        } elseif (is_array($routesDef)) {
-            $this->routes = $routesDef;
-        } else {
-            throw new InvalidArgumentException(
-                'Invalid argument for router, expecting a file path or an array of routes'
-            );
-        }
+        $this->cacheFile = $cacheFile;
     }
 
     /**
@@ -87,28 +66,37 @@ class Router implements RouterInterface
         return $this->routeParser;
     }
 
-    public function getRoutesLit()
+    public function getRoutesList()
     {
         if (null === $this->routes) {
-            $routes = new ConfigProcessor($this->routesFilePath);
-            $this->routes = $routes->all();
+            $this->routes = $this->loadRouteArray();
         }
         return $this->routes;
     }
 
+    /**
+     * implement to get routes to be cached
+     */
+    abstract protected function loadRouteArray();
+
     private function getDispatcher()
     {
         if (!$this->dispatcher) {
+            $cache = $this->cacheFile ? $this->cacheFile : '';
+
             $this->dispatcher = \FastRoute\cachedDispatcher(function (RouteCollector $r) {
-                foreach ($this->getRoutesLit() as $name => $route) {
+                foreach ($this->getRoutesList() as $name => $route) {
                     $route['name'] = $name;
-                    $r->addRoute($route['methods'] ?? ['GET'], $route['path'], $route);
+
+                    $methods = isset($route['methods']) ? $route['methods'] : ['GET'];
+
+                    $r->addRoute($methods, $route['path'], $route);
                     // TODO warn for invalid route patter
                 }
             }, [
                 'routeParser' => $this->getRouteParser(),
-                'cacheDisabled' => true, // TODO
-                'cacheFile' => '/tmp/TODO:HATCHER_ROUTER.cache'
+                'cacheFile' => $cache,
+                'cacheDisabled' => empty($cache)
             ]);
         }
         return $this->dispatcher;
@@ -120,45 +108,49 @@ class Router implements RouterInterface
      * @param string $basePath
      *
      */
-    public function setBasePath(string $basePath)
+    public function setBasePath($basePath)
     {
         $this->basePath = $basePath;
     }
-
-
 
     /**
      * Dispatch router for HTTP request
      *
      * @param  ServerRequestInterface $request The current HTTP request object
      *
-     * @return array
+     * @return MatchedRoute
      *
-     * @link   https://github.com/nikic/FastRoute/blob/master/src/Dispatcher.php
+     * @link https://github.com/nikic/FastRoute/blob/master/src/Dispatcher.php
      */
-    public function match(ServerRequestInterface $request) : MatchedRoute
+    public function match(ServerRequestInterface $request)
     {
         $virtualPath = $this->extractRequestVirtualPath($request);
-
         if (empty($virtualPath) || $virtualPath{0} !== '/') {
             $virtualPath = '/' . $virtualPath;
         }
-
         $dispatchData = $this->getDispatcher()->dispatch(
             $request->getMethod(),
             $virtualPath
         );
-
         return $this->prepareMatchingData($dispatchData);
     }
 
-    private function prepareMatchingData(array $dispatchData) : MatchedRoute
+    /**
+     * @param array $dispatchData
+     * @return MatchedRoute
+     * @throws \Hatcher\Router\NotFound
+     */
+    private function prepareMatchingData(array $dispatchData)
     {
         if ($dispatchData[0] === 0) {
             throw new NotFound;
         }
+
+        $default = isset($dispatchData[1]['defaults']) && is_array($dispatchData[1]['defaults'])
+            ? $dispatchData[1]['defaults'] : [];
+
         $data = array_merge(
-            $dispatchData[1]['defaults'] ?? [],
+            $default,
             $dispatchData[2]
         );
         return new MatchedRoute($dispatchData[1]['name'], $data);
@@ -178,17 +170,14 @@ class Router implements RouterInterface
             } elseif ($requestScriptDir !== '/' && stripos($requestUri, $requestScriptDir) === 0) {
                 $basePath = $requestScriptDir;
             }
-
             if ($basePath) {
                 $virtualPath = ltrim(substr($requestUri, strlen($basePath)), '/');
             }
-
             return $virtualPath;
         } else {
             return $requestUri;
         }
     }
-
     /**
      * Get named route object
      *
@@ -200,14 +189,12 @@ class Router implements RouterInterface
      */
     public function getNamedRoute($name)
     {
-        $routes = $this->getRoutesLit();
-
+        $routes = $this->getRoutesList();
         if (!isset($routes[$name])) {
             throw new RuntimeException('Named route does not exist for name: ' . $name);
         }
         return $routes[$name];
     }
-
     /**
      * Build the path for a named route excluding the base path
      *
@@ -225,14 +212,12 @@ class Router implements RouterInterface
         // TODO
         $route = $this->getNamedRoute($name);
         $pattern = $route['path'];
-
         $routeDatas = $this->routeParser->parse($pattern);
         // $routeDatas is an array of all possible routes that can be made. There is
         // one routedata for each optional parameter plus one for no optional parameters.
         //
         // The most specific is last, so we look for that first.
         $routeDatas = array_reverse($routeDatas);
-
         $segments = [];
         foreach ($routeDatas as $routeData) {
             foreach ($routeData as $item) {
@@ -241,7 +226,6 @@ class Router implements RouterInterface
                     $segments[] = $item;
                     continue;
                 }
-
                 // This segment has a parameter: first element is the name
                 if (!array_key_exists($item[0], $data)) {
                     // we don't have a data element for this segment: cancel
@@ -259,20 +243,15 @@ class Router implements RouterInterface
                 break;
             }
         }
-
         if (empty($segments)) {
             throw new InvalidArgumentException('Missing data for URL segment: ' . $segmentName);
         }
         $url = implode('', $segments);
-
         if ($queryParams) {
             $url .= '?' . http_build_query($queryParams);
         }
-
         return $url;
     }
-
-
     /**
      * Build the path for a named route including the base path
      *
@@ -288,11 +267,9 @@ class Router implements RouterInterface
     public function pathFor($name, array $data = [], array $queryParams = [])
     {
         $url = $this->relativePathFor($name, $data, $queryParams);
-
         if ($this->basePath) {
             $url = $this->basePath . $url;
         }
-
         return $url;
     }
 }

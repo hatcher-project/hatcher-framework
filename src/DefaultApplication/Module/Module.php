@@ -8,7 +8,7 @@ namespace Hatcher\DefaultApplication\Module;
 use GuzzleHttp\Psr7\Response;
 use Hatcher\DirectoryDi;
 use Hatcher\Exception;
-use Hatcher\Exception\NotFound;
+use Hatcher\Router\NotFound;
 use Hatcher\RouteHandlerInterface;
 use Hatcher\Router\MatchedRoute;
 use Hatcher\Router\Router;

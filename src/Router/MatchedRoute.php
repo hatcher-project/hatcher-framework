@@ -35,6 +35,6 @@ class MatchedRoute extends \ArrayObject
      */
     public function getData(string $name, string $default = null) : string
     {
-        return $this->data[$name] ?? $default;
+        return $this[$name] ?? $default;
     }
 }

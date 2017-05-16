@@ -8,6 +8,7 @@ namespace Hatcher\DefaultApplication\Module;
 use Hatcher\AbstractModule;
 use Hatcher\Action;
 use Hatcher\Exception;
+use Hatcher\Router\NotFound;
 use Hatcher\RouteHandlerInterface;
 use Hatcher\Router\MatchedRoute;
 use Psr\Http\Message\ResponseInterface;
@@ -93,7 +94,7 @@ class RouteHandler implements RouteHandlerInterface
             $stack[] = $action;
 
             return $this->executeMiddlewareStack($stack, $request);
-        } catch (Exception\NotFound $e) {
+        } catch (NotFound $e) {
             return $this->handle($this->module->getNotFoundHandler(), $request);
         }
     }
